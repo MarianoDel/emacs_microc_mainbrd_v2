@@ -50,7 +50,8 @@ typedef enum {
 
 
 // Globals ---------------------------------------------------------------------
-treatment_conf_t treatment_conf;
+treatment_conf_t treat_conf_sine;
+treatment_conf_t treat_conf_square;
 treatment_e treat_state = 0;
 probe_comms_e probe_comm_state = 0;
 
@@ -61,8 +62,6 @@ probe_comms_e probe_comm_state = 0;
 // Module Functions ------------------------------------------------------------
 void Treatment_Manager (void)
 {
-    unsigned char start_flag = 0;
-    
     switch (treat_state)
     {
     case TREATMENT_INIT:
@@ -73,34 +72,26 @@ void Treatment_Manager (void)
                 
     case TREATMENT_STANDBY:
         
-        if (Treatment_Start_Flag ())
+        if (Treatment_Sine_Start_Flag ())
         {
-            Treatment_Start_Flag_Reset ();
+            Treatment_Sine_Start_Flag_Reset ();
+	    UsartRpiSend("starting sinusoidal\r\n");
+	    Signals_Sinusoidal_Reset ();
+	    treat_state = TREATMENT_SINE_RUNNING;
+        }
 
-            // if (Probe_Get_Status () == CONN_STABLISH)
-                // start_flag = 1;
-	    start_flag = 1;
-        }
-        
-        if (start_flag)
+        if (Treatment_Square_Start_Flag ())
         {
-            if (treatment_conf.mode == MODE_SQUARE)
-            {
-                UsartRpiSend("starting square\r\n");
-                Signals_Square_Reset ();
-                treat_state = TREATMENT_SQUARE_RUNNING;
-            }
-            else if (treatment_conf.mode == MODE_SINE)
-            {
-                UsartRpiSend("starting sinusoidal\r\n");
-                Signals_Sinusoidal_Reset ();
-                treat_state = TREATMENT_SINE_RUNNING;
-            }            
-        }
+            Treatment_Square_Start_Flag_Reset ();
+	    UsartRpiSend("starting square\r\n");
+	    Signals_Square_Reset ();
+	    treat_state = TREATMENT_SQUARE_RUNNING;
+	}	
+
         break;
         
     case TREATMENT_SQUARE_RUNNING:
-        Signals_Square (&treatment_conf);
+        Signals_Square (&treat_conf_square);
 
         if (Treatment_Stop_Flag ())
         {
@@ -110,7 +101,7 @@ void Treatment_Manager (void)
         break;
         
     case TREATMENT_SINE_RUNNING:
-        Signals_Sinusoidal (&treatment_conf);
+        Signals_Sinusoidal (&treat_conf_sine);
 
         if (Treatment_Stop_Flag ())
         {
@@ -133,23 +124,10 @@ void Treatment_Manager (void)
         break;
     }
 
-    // check probe communications
-    // switch (probe_comm_state)
-    // {
-    // case PROBE_NO_COMMS:
-    //     break;
-
-    // case PROBE_PLUGGED_WITH_COMMS:
-    //     break;
-
-    // default:
-    //     probe_comm_state = PROBE_NO_COMMS;
-    //     break;
-    // }
 }
 
 
-resp_e Treatment_SetFrequency_Str (char * str)
+resp_e Treatment_SetFrequency_Str (mode_e mode, char * str)
 {
     resp_e resp = resp_error;
     int figures = 0;
@@ -166,7 +144,7 @@ resp_e Treatment_SetFrequency_Str (char * str)
 
         if ((figures > 1) && (figures < 3) && (new_freq_dec <= 99))
         {
-            resp = Treatment_SetFrequency (new_freq_int, new_freq_dec);
+            resp = Treatment_SetFrequency (mode, new_freq_int, new_freq_dec);
         }
     }
 
@@ -174,15 +152,23 @@ resp_e Treatment_SetFrequency_Str (char * str)
 }
 
 
-resp_e Treatment_SetFrequency (unsigned short fint, unsigned short fdec)
+resp_e Treatment_SetFrequency (mode_e mode, unsigned short fint, unsigned short fdec)
 {
     resp_e resp = resp_error;
     
     if ((fint <= 999) && (fdec <= 99))
     {
-        treatment_conf.freq_int = fint;
-        treatment_conf.freq_dec = fdec;
-
+	if (mode == MODE_SINE)
+	{
+	    treat_conf_sine.freq_int = fint;
+	    treat_conf_sine.freq_dec = fdec;
+	}
+	else
+	{
+	    treat_conf_square.freq_int = fint;
+	    treat_conf_square.freq_dec = fdec;
+	}
+	
         Signals_Set_Frequency_Intensity_Change_Flag ();
         
         resp = resp_ok;
@@ -192,7 +178,7 @@ resp_e Treatment_SetFrequency (unsigned short fint, unsigned short fdec)
 }
 
 
-resp_e Treatment_SetIntensity_Str (char * str)
+resp_e Treatment_SetIntensity_Str (mode_e mode, char * str)
 {
     resp_e resp = resp_error;
     int figures = 0;
@@ -203,20 +189,23 @@ resp_e Treatment_SetIntensity_Str (char * str)
 
     if ((figures) && (figures <= 3) && (new_intensity <= 999))
     {
-        resp = Treatment_SetIntensity (new_intensity);
+        resp = Treatment_SetIntensity (mode, new_intensity);
     }
 
     return resp;
 }
 
 
-resp_e Treatment_SetIntensity (unsigned short intensity)
+resp_e Treatment_SetIntensity (mode_e mode, unsigned short intensity)
 {
     resp_e resp = resp_error;
     
     if (intensity <= 999)
     {
-        treatment_conf.intensity = intensity;
+	if (mode == MODE_SINE)
+	    treat_conf_sine.intensity = intensity;
+	else
+	    treat_conf_square.intensity = intensity;
 
         Signals_Set_Frequency_Intensity_Change_Flag ();
         
@@ -233,17 +222,20 @@ resp_e Treatment_SetPolarity_Str (char * str)
     
     if (!strncmp(str, "pos", sizeof("pos") - 1))
     {
-        treatment_conf.polarity = POLARITY_POS;
+        treat_conf_sine.polarity = POLARITY_POS;
+        treat_conf_square.polarity = POLARITY_POS;	
         resp = resp_ok;
     }
     else if (!strncmp(str, "neg", sizeof("neg") - 1))
     {
-        treatment_conf.polarity = POLARITY_NEG;
+        treat_conf_sine.polarity = POLARITY_NEG;
+        treat_conf_square.polarity = POLARITY_NEG;	
         resp = resp_ok;        
     }
     else if (!strncmp(str, "alt", sizeof("alt") - 1))
     {
-        treatment_conf.polarity = POLARITY_ALT;
+        treat_conf_sine.polarity = POLARITY_ALT;
+        treat_conf_square.polarity = POLARITY_ALT;	
         resp = resp_ok;        
     }
 
@@ -254,23 +246,23 @@ resp_e Treatment_SetPolarity_Str (char * str)
 }
 
 
-resp_e Treatment_SetMode_Str (char * str)
-{
-    resp_e resp = resp_error;
+// resp_e Treatment_SetMode_Str (char * str)
+// {
+//     resp_e resp = resp_error;
     
-    if (!strncmp(str, "square", sizeof("square") - 1))
-    {
-        treatment_conf.mode = MODE_SQUARE;
-        resp = resp_ok;        
-    }
-    else if (!strncmp(str, "sine", sizeof("sine") - 1))
-    {
-        treatment_conf.mode = MODE_SINE;
-        resp = resp_ok;        
-    }
+//     if (!strncmp(str, "square", sizeof("square") - 1))
+//     {
+//         treatment_conf.mode = MODE_SQUARE;
+//         resp = resp_ok;        
+//     }
+//     else if (!strncmp(str, "sine", sizeof("sine") - 1))
+//     {
+//         treatment_conf.mode = MODE_SINE;
+//         resp = resp_ok;        
+//     }
 
-    return resp;
-}
+//     return resp;
+// }
 
 
 resp_e Treatment_SetThreshold_Str (char * str)
@@ -297,7 +289,8 @@ resp_e Treatment_SetThreshold (unsigned short threshold)
     
     if (threshold <= 100)
     {
-        treatment_conf.threshold = threshold;
+        treat_conf_sine.threshold = threshold;
+        treat_conf_square.threshold = threshold;	
         resp = resp_ok;
     }
 
@@ -305,9 +298,12 @@ resp_e Treatment_SetThreshold (unsigned short threshold)
 }
 
 
-void Treatment_Start (void)
+void Treatment_Start (mode_e mode)
 {
-    Treatment_Start_Flag_Set ();
+    if (mode == MODE_SINE)
+	Treatment_Sine_Start_Flag_Set ();
+    else
+	Treatment_Square_Start_Flag_Set ();
 }
 
 
@@ -403,29 +399,52 @@ void Treatment_GetAllConf (char * tosend)
 }
 
 
-#define START_SET    0x01
-#define START_SET_MASK    0xFE
-#define STOP_SET    0x02
-#define STOP_SET_MASK    0xFD
+#define START_SINE_SET    0x01
+#define START_SINE_SET_MASK    0xFE
+#define START_SQUARE_SET    0x02
+#define START_SQUARE_SET_MASK    0xFD
+#define STOP_SET    0x04
+#define STOP_SET_MASK    0xFB
 unsigned char start_stop_flag = 0;
-unsigned char Treatment_Start_Flag (void)
+unsigned char Treatment_Sine_Start_Flag (void)
 {
-    if (start_stop_flag & START_SET)
+    if (start_stop_flag & START_SINE_SET)
         return 1;
 
     return 0;
 }
 
 
-void Treatment_Start_Flag_Set (void)
+void Treatment_Sine_Start_Flag_Set (void)
 {
-    start_stop_flag |= START_SET;
+    start_stop_flag |= START_SINE_SET;
 }
 
 
-void Treatment_Start_Flag_Reset (void)
+void Treatment_Sine_Start_Flag_Reset (void)
 {
-    start_stop_flag &= START_SET_MASK;
+    start_stop_flag &= START_SINE_SET_MASK;
+}
+
+
+unsigned char Treatment_Square_Start_Flag (void)
+{
+    if (start_stop_flag & START_SQUARE_SET)
+        return 1;
+
+    return 0;
+}
+
+
+void Treatment_Square_Start_Flag_Set (void)
+{
+    start_stop_flag |= START_SQUARE_SET;
+}
+
+
+void Treatment_Square_Start_Flag_Reset (void)
+{
+    start_stop_flag &= START_SQUARE_SET_MASK;
 }
 
 

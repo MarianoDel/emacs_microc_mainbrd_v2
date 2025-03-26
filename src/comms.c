@@ -202,9 +202,9 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     char * msg = msg_str;
     
     // -- config messages for signals --
-    if (!strncmp(msg, "frequency", sizeof("frequency") - 1))
+    if (!strncmp(msg, "sine frequency", sizeof("sine frequency") - 1))
     {
-        resp = Treatment_SetFrequency_Str (msg + sizeof("frequency"));
+        resp = Treatment_SetFrequency_Str (MODE_SINE, msg + sizeof("sine frequency"));
         if (resp == resp_ok)
 	{
 	    UsartChannel1Send (msg);
@@ -214,9 +214,21 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
             UsartRpiSend (s_ans_nok);
     }
 
-    else if (!strncmp(msg, "intensity", sizeof("intensity") - 1))
+    if (!strncmp(msg, "square frequency", sizeof("square frequency") - 1))
     {
-        resp = Treatment_SetIntensity_Str (msg + sizeof("intensity"));
+        resp = Treatment_SetFrequency_Str (MODE_SQUARE, msg + sizeof("square frequency"));
+        if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
+            UsartRpiSend (s_ans_ok);
+	}
+        else
+            UsartRpiSend (s_ans_nok);
+    }
+    
+    else if (!strncmp(msg, "sine intensity", sizeof("sine intensity") - 1))
+    {
+        resp = Treatment_SetIntensity_Str (MODE_SINE, msg + sizeof("sine intensity"));
         if (resp == resp_ok)
 	{
 	    UsartChannel1Send (msg);
@@ -226,6 +238,18 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
             UsartRpiSend (s_ans_nok);
     }
 
+    else if (!strncmp(msg, "square intensity", sizeof("square intensity") - 1))
+    {
+        resp = Treatment_SetIntensity_Str (MODE_SQUARE, msg + sizeof("square intensity"));
+        if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
+            UsartRpiSend (s_ans_ok);
+	}
+        else
+            UsartRpiSend (s_ans_nok);
+    }
+    
     else if (!strncmp(msg, "polarity", sizeof("polarity") - 1))
     {
         resp = Treatment_SetPolarity_Str (msg + sizeof("polarity"));
@@ -239,17 +263,17 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     }
 
     // config messages for channel setup
-    else if (!strncmp(msg, "mode", sizeof("mode") - 1))
-    {
-        resp = Treatment_SetMode_Str (msg + sizeof("mode"));
-        if (resp == resp_ok)
-	{
-	    UsartChannel1Send (msg);
-            UsartRpiSend (s_ans_ok);
-	}
-        else
-            UsartRpiSend (s_ans_nok);
-    }
+    // else if (!strncmp(msg, "mode", sizeof("mode") - 1))
+    // {
+    //     resp = Treatment_SetMode_Str (msg + sizeof("mode"));
+    //     if (resp == resp_ok)
+    // 	{
+    // 	    UsartChannel1Send (msg);
+    //         UsartRpiSend (s_ans_ok);
+    // 	}
+    //     else
+    //         UsartRpiSend (s_ans_nok);
+    // }
 
     else if (!strncmp(msg, "threshold", sizeof("threshold") - 1))
     {
@@ -264,24 +288,23 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     }
 
     // -- operation messages --
-    else if (!strncmp(msg, "start square", sizeof("start square") - 1))
+    else if (!strncmp(msg, "square start", sizeof("square start") - 1))
     {
-	Treatment_SetMode_Str ("square");
-        Treatment_Start ();
+        Treatment_Start (MODE_SQUARE);
         UsartRpiSend (s_ans_ok);
     }
 
-    else if (!strncmp(msg, "start sine", sizeof("start sine") - 1))
+    else if (!strncmp(msg, "sine start", sizeof("sine start") - 1))
     {
-	Treatment_SetMode_Str ("sine");
-        Treatment_Start ();
+        Treatment_Start (MODE_SINE);
         UsartRpiSend (s_ans_ok);
     }
-    else if (!strncmp(msg, "start", sizeof("start") - 1))
-    {
-        Treatment_Start ();
-        UsartRpiSend (s_ans_ok);
-    }
+
+    // else if (!strncmp(msg, "start", sizeof("start") - 1))
+    // {
+    //     Treatment_Start ();
+    //     UsartRpiSend (s_ans_ok);
+    // }
     
     else if (!strncmp(msg, "stop", sizeof("stop") - 1))
     {

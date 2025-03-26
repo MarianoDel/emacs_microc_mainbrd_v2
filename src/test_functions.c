@@ -488,7 +488,7 @@ void TF_Square_Sweep (void)
     // 	Wait_ms(200);
     // }
 
-    Treatment_SetIntensity (200);    
+    Treatment_SetIntensity (MODE_SQUARE, 200);    
     while (1)
     {
 	Timer_Polarity (POLARITY_POS);
@@ -497,7 +497,7 @@ void TF_Square_Sweep (void)
 	for (int i = 0; i < 5; i++)
 	{
 	    // Treatment_SetFrequency (new_freq_int, new_freq_dec);	    
-	    Treatment_SetFrequency (i, 5);
+	    Treatment_SetFrequency (MODE_SQUARE, i, 5);
 	    timer_standby = 2000;
 
 	    while (timer_standby)
@@ -529,7 +529,7 @@ void TF_Square_Sweep (void)
 	for (int i = 5; i < 10; i++)
 	{
 	    // Treatment_SetFrequency (new_freq_int, new_freq_dec);	    
-	    Treatment_SetFrequency (i, 0);
+	    Treatment_SetFrequency (MODE_SQUARE, i, 0);
 	    timer_standby = 2000;
 
 	    while (timer_standby)
@@ -560,7 +560,7 @@ void TF_Square_Sweep (void)
 	for (int i = 10; i < 20; i+=2)
 	{
 	    // Treatment_SetFrequency (new_freq_int, new_freq_dec);	    
-	    Treatment_SetFrequency (i, 0);
+	    Treatment_SetFrequency (MODE_SQUARE, i, 0);
 	    timer_standby = 2000;
 
 	    while (timer_standby)
@@ -591,7 +591,7 @@ void TF_Square_Sweep (void)
 	for (int i = 20; i < 40; i+=5)
 	{
 	    // Treatment_SetFrequency (new_freq_int, new_freq_dec);	    
-	    Treatment_SetFrequency (i, 0);
+	    Treatment_SetFrequency (MODE_SQUARE, i, 0);
 	    timer_standby = 2000;
 
 	    while (timer_standby)
