@@ -84,6 +84,12 @@
 #define ENA_SPEAKER_OFF    (GPIOA->BSRR = 0x00020000)
 
 // PA2 PA3 Alternative Usart2 Tx Rx
+#define PA2    ((GPIOA->ODR & 0x0004) != 0)
+#define PA2_ON    (GPIOA->BSRR = 0x00000004)
+#define PA2_OFF    (GPIOA->BSRR = 0x00040000)
+#define PA3_   ((GPIOA->ODR & 0x0008) != 0)
+#define PA3_ON    (GPIOA->BSRR = 0x00000008)
+#define PA3_OFF    (GPIOA->BSRR = 0x00080000)
 
 // PA4 Analog DAC Output1 (SIG_CH)
 // PA5 Analog DAC Output2 (IN_PLUS_AUDIO)
@@ -211,15 +217,23 @@ void Hard_GetHardSoft (char * buff);
 void Hard_GetVoltages_Complete (void);
 
 void Ena_Rpi_On (void);
+
 void Ena_Ch1_On (void);
 void Ena_Ch2_On (void);
 void Ena_Ch3_On (void);
 void Ena_Ch4_On (void);
+
 void Ena_Rpi_Off (void);
+
 void Ena_Ch1_Off (void);
 void Ena_Ch2_Off (void);
 void Ena_Ch3_Off (void);
 void Ena_Ch4_Off (void);
+
+unsigned char Ena_Ch1_Is_On (void);
+unsigned char Ena_Ch2_Is_On (void);
+unsigned char Ena_Ch3_Is_On (void);
+unsigned char Ena_Ch4_Is_On (void);
 
 void Left_Off (void);
 void Left_On (void);

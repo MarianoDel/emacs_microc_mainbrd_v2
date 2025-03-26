@@ -1,4 +1,4 @@
-# MicroCurrent version 1.0
+# MicroCurrent version 2.0
 micro STM32F103RCT6
 
 Before begin check micro selection and configs.

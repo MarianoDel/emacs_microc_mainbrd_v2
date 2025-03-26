@@ -97,89 +97,61 @@ static void Comms_Messages (char * msg_str)
             UsartChannel1Send (buff);
         }
     }
-    else if (strncmp (msg_str, "ch2", sizeof("ch2") - 1) == 0)
+    else if (strncmp (msg_str, "ch", sizeof("ch") - 1) == 0)
     {
-        // check enable or bridged
+        // check enable or disable
         if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
         {
-            Ena_Ch2_On();
-            UsartRpiSend(s_ans_ok);
-        }
-        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
-        {
-            Ena_Ch2_Off();
-            UsartRpiSend(s_ans_ok);
-        }
-        else    // check message for treatment info
-        {
-            Comms_Messages_For_Channels_Treatment (msg_str + 4);
-        }
-    }
-    else if (strncmp (msg_str, "ch3", sizeof("ch3") - 1) == 0)
-    {
-        // check enable or bridged
-        if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
-        {
-            Ena_Ch3_On();
-            UsartRpiSend(s_ans_ok);
-        }
-        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
-        {
-            Ena_Ch3_Off();
-            UsartRpiSend(s_ans_ok);
-        }
-        else    // check message for treatment info
-        {
-            Comms_Messages_For_Channels_Treatment (msg_str + 4);
-        }
-    }
-    else if (strncmp (msg_str, "ch4", sizeof("ch4") - 1) == 0)
-    {
-        // check enable or bridged
-        if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
-        {
-            Ena_Ch4_On();
-            UsartRpiSend(s_ans_ok);
-        }
-        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
-        {
-            Ena_Ch4_Off();
-            UsartRpiSend(s_ans_ok);
-        }
-        else    // check message for treatment info
-        {
-            Comms_Messages_For_Channels_Treatment (msg_str + 4);
-        }
-    }
-    else if (strncmp (msg_str, "chf", sizeof("chf") - 1) == 0)
-    {
-        // check enable or bridged
-        if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
-        {
-            Ena_Ch1_On();
-            Ena_Ch2_On();
-            Ena_Ch3_On();
-            Ena_Ch4_On();            
-            UsartRpiSend(s_ans_ok);
-        }
-        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
-        {
-            Ena_Ch1_Off();
-            Ena_Ch2_Off();
-            Ena_Ch3_Off();
-            Ena_Ch4_Off();            
-            UsartRpiSend(s_ans_ok);
-        }
-        else    // bridge the message
-        {
-            sprintf(buff, "%s\n", (msg_str + 4));
-            UsartChannel1Send (buff);
+	    switch (*(msg_str + 2))
+	    {
+	    case '2':
+		Ena_Ch2_On();
+		break;
 
-	    // check message for treatment info
-            Comms_Messages_For_Channels_Treatment (msg_str + 4);
+	    case '3':
+		Ena_Ch3_On();		
+		break;
+
+	    case '4':
+		Ena_Ch4_On();		
+		break;
+
+	    case 'f':
+		Ena_Ch1_On();
+		Ena_Ch2_On();
+		Ena_Ch3_On();
+		Ena_Ch4_On();
+		break;
+	    }
+            UsartRpiSend(s_ans_ok);
+        }
+        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
+        {
+	    switch (*(msg_str + 2))
+	    {
+	    case '2':
+		Ena_Ch2_Off();
+		break;
+
+	    case '3':
+		Ena_Ch3_Off();		
+		break;
+
+	    case '4':
+		Ena_Ch4_Off();		
+		break;
+
+	    case 'f':
+		Ena_Ch1_Off();
+		Ena_Ch2_Off();
+		Ena_Ch3_Off();
+		Ena_Ch4_Off();
+		break;
+	    }
+            UsartRpiSend(s_ans_ok);
         }
     }
-
+    
     else if (strncmp (msg_str, "encod", sizeof("encod") - 1) == 0)
     {
         char * pmsg = msg_str + sizeof("encod") - 1;
@@ -211,8 +183,14 @@ static void Comms_Messages (char * msg_str)
         // not implemented yet!
         UsartRpiSend(s_ans_ok);
     }
+    
     else
-        UsartRpiSend(s_ans_nok);
+    {
+	// other messages
+	Comms_Messages_For_Channels_Treatment (msg_str);
+	// UsartRpiSend(s_ans_nok);
+    }
+     
 
 }
 
@@ -228,7 +206,10 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     {
         resp = Treatment_SetFrequency_Str (msg + sizeof("frequency"));
         if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
             UsartRpiSend (s_ans_ok);
+	}
         else
             UsartRpiSend (s_ans_nok);
     }
@@ -237,7 +218,10 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     {
         resp = Treatment_SetIntensity_Str (msg + sizeof("intensity"));
         if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
             UsartRpiSend (s_ans_ok);
+	}
         else
             UsartRpiSend (s_ans_nok);
     }
@@ -246,7 +230,10 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     {
         resp = Treatment_SetPolarity_Str (msg + sizeof("polarity"));
         if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
             UsartRpiSend (s_ans_ok);
+	}
         else
             UsartRpiSend (s_ans_nok);
     }
@@ -256,7 +243,10 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     {
         resp = Treatment_SetMode_Str (msg + sizeof("mode"));
         if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
             UsartRpiSend (s_ans_ok);
+	}
         else
             UsartRpiSend (s_ans_nok);
     }
@@ -265,18 +255,34 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     {
         resp = Treatment_SetThreshold_Str (msg + sizeof("threshold"));
         if (resp == resp_ok)
+	{
+	    UsartChannel1Send (msg);
             UsartRpiSend (s_ans_ok);
+	}
         else
             UsartRpiSend (s_ans_nok);
     }
 
     // -- operation messages --
+    else if (!strncmp(msg, "start square", sizeof("start square") - 1))
+    {
+	Treatment_SetMode_Str ("square");
+        Treatment_Start ();
+        UsartRpiSend (s_ans_ok);
+    }
+
+    else if (!strncmp(msg, "start sine", sizeof("start sine") - 1))
+    {
+	Treatment_SetMode_Str ("sine");
+        Treatment_Start ();
+        UsartRpiSend (s_ans_ok);
+    }
     else if (!strncmp(msg, "start", sizeof("start") - 1))
     {
         Treatment_Start ();
         UsartRpiSend (s_ans_ok);
     }
-
+    
     else if (!strncmp(msg, "stop", sizeof("stop") - 1))
     {
         Treatment_Stop ();

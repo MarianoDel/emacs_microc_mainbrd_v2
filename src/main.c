@@ -102,19 +102,24 @@ int main (void)
     
     //-- Comms with rasp
     Ena_Rpi_On ();
-    Usart1Config ();
+    UsartRpiConfig ();
     Wait_ms(500);
 
-
-    //-- Comms with probes
-    // Usart3Config ();
-
+    //-- Comms with ch1
+    Ena_Ch1_On ();
+    UsartChannel1Config ();
+    Wait_ms(500);
+    
     //-- TIM1 for signals module sequence ready
     TIM6_Init();    // for square times
     TIM7_Init();    // for sine times
     
     //-- Welcome Code
     UsartRpiSend("\r\nMicro Current - Main Board v2.0 - starting...\r\n");
+    Ena_Ch1_On();
+    Ena_Ch2_On();
+    Ena_Ch3_On();
+    Ena_Ch4_On();
     
     //-- Main Loop --------------------------
     while (1)

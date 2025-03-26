@@ -130,6 +130,7 @@ void Timer_Polarity_Always_Right (void)
     Timer_Polarity_Gpios_To_Push_Pull ();
     Left_Off();
     Right_On();
+    Sync_Ch1_Off();    
 }
 
 
@@ -140,7 +141,8 @@ void Timer_Polarity_Always_Left (void)
     // revert gpios
     Timer_Polarity_Gpios_To_Push_Pull ();
     Left_On();
-    Right_Off();    
+    Right_Off();
+    Sync_Ch1_On();
 }
 
 

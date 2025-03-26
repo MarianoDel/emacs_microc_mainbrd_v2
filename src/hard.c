@@ -60,6 +60,30 @@ void Ena_Ch4_On (void)
 }
 
 
+unsigned char Ena_Ch1_Is_On (void)
+{
+    return ENA_CH1_ON;
+}
+
+
+unsigned char Ena_Ch2_Is_On (void)
+{
+    return ENA_CH2_ON;
+}
+
+
+unsigned char Ena_Ch3_Is_On (void)
+{
+    return ENA_CH3_ON;
+}
+
+
+unsigned char Ena_Ch4_Is_On (void)
+{
+    return ENA_CH4_ON;
+}
+
+
 void Ena_Rpi_Off (void)
 {
     ENA_RPI_OFF;
