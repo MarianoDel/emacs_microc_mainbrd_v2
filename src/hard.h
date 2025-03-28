@@ -240,6 +240,8 @@ void Left_On (void);
 void Right_Off (void);
 void Right_On (void);
 
+unsigned char Left_Is_On (void);
+
 void Sync_Ch1_Off (void);
 void Sync_Ch1_On (void);
 

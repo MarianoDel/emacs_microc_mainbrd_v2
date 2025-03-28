@@ -147,6 +147,12 @@ void Right_On (void)
 }
 
 
+unsigned char Left_Is_On (void)
+{
+    return IN_LEFT_CH2;
+}
+
+
 void Sync_Ch1_On (void)
 {
     SYNC_CH1_ON;

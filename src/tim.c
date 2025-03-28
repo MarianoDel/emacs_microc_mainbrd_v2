@@ -580,6 +580,17 @@ void TIM8_Update_CH4 (unsigned short a)
 {
     TIM8->CCR4 = a;
 }
+
+
+unsigned char TIM8_Check_CCR (void)
+{
+    unsigned char a = 0;
+    
+    if (TIM8->CNT > TIM8->CCR1)
+	a = 1;
+
+    return a;
+}
 #endif    //STM32F10X_HD
 
 //--- end of file ---//

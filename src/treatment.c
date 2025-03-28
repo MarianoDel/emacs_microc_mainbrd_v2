@@ -38,14 +38,6 @@ typedef enum {
 } treatment_e;
 
 
-typedef enum {
-    PROBE_NO_COMMS = 0,
-    PROBE_PLUGGED_WITH_COMMS
-
-} probe_comms_e;
-
-
-
 // Externals -------------------------------------------------------------------
 
 
@@ -53,7 +45,6 @@ typedef enum {
 treatment_conf_t treat_conf_sine;
 treatment_conf_t treat_conf_square;
 treatment_e treat_state = 0;
-probe_comms_e probe_comm_state = 0;
 
 
 // Module Private Functions ----------------------------------------------------

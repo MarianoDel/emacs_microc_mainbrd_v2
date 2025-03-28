@@ -40,6 +40,7 @@ volatile unsigned short comms_timeout = 0;
 // Module Private Functions ----------------------------------------------------
 static void Comms_Messages (char * msg_str);
 static void Comms_Messages_For_Channels_Treatment (char * msg_str);
+static void Comms_Bridge_Channel1_Msg (char * msg_for_ch1);
 
 
 // Module Functions ------------------------------------------------------------
@@ -74,36 +75,18 @@ void Comms_Update (void)
 
 static void Comms_Messages (char * msg_str)
 {
-    char buff [128];    
-    
     // check if its own, broadcast or channel
-    // for channel 1
-    if (strncmp (msg_str, "ch1", sizeof("ch1") - 1) == 0)
-    {
-        // check enable or bridged
-        if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
-        {
-            Ena_Ch1_On();
-            UsartRpiSend(s_ans_ok);
-        }
-        else if (strncmp ((msg_str + 4), "disable", sizeof("disable") - 1) == 0)
-        {
-            Ena_Ch1_Off();
-            UsartRpiSend(s_ans_ok);
-        }
-        else    // bridge the message
-        {
-            sprintf(buff, "%s\n", (msg_str + 4));
-            UsartChannel1Send (buff);
-        }
-    }
-    else if (strncmp (msg_str, "ch", sizeof("ch") - 1) == 0)
+    if (strncmp (msg_str, "ch", sizeof("ch") - 1) == 0)
     {
         // check enable or disable
         if (strncmp ((msg_str + 4), "enable", sizeof("enable") - 1) == 0)
         {
 	    switch (*(msg_str + 2))
 	    {
+	    case '1':
+		Ena_Ch1_On();
+		break;
+
 	    case '2':
 		Ena_Ch2_On();
 		break;
@@ -129,10 +112,14 @@ static void Comms_Messages (char * msg_str)
         {
 	    switch (*(msg_str + 2))
 	    {
+	    case '1':
+		Ena_Ch1_Off();
+		break;
+
 	    case '2':
 		Ena_Ch2_Off();
 		break;
-
+		
 	    case '3':
 		Ena_Ch3_Off();		
 		break;
@@ -207,7 +194,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetFrequency_Str (MODE_SINE, msg + sizeof("sine frequency"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -219,7 +206,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetFrequency_Str (MODE_SQUARE, msg + sizeof("square frequency"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -231,7 +218,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetIntensity_Str (MODE_SINE, msg + sizeof("sine intensity"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -243,7 +230,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetIntensity_Str (MODE_SQUARE, msg + sizeof("square intensity"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -255,7 +242,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetPolarity_Str (msg + sizeof("polarity"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -268,7 +255,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     //     resp = Treatment_SetMode_Str (msg + sizeof("mode"));
     //     if (resp == resp_ok)
     // 	{
-    // 	    UsartChannel1Send (msg);
+    // 	    Comms_Bridge_Channel1_Msg (msg);
     //         UsartRpiSend (s_ans_ok);
     // 	}
     //     else
@@ -280,7 +267,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         resp = Treatment_SetThreshold_Str (msg + sizeof("threshold"));
         if (resp == resp_ok)
 	{
-	    UsartChannel1Send (msg);
+	    Comms_Bridge_Channel1_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -291,12 +278,14 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     else if (!strncmp(msg, "square start", sizeof("square start") - 1))
     {
         Treatment_Start (MODE_SQUARE);
+	Comms_Bridge_Channel1_Msg (msg);
         UsartRpiSend (s_ans_ok);
     }
 
     else if (!strncmp(msg, "sine start", sizeof("sine start") - 1))
     {
         Treatment_Start (MODE_SINE);
+	Comms_Bridge_Channel1_Msg (msg);
         UsartRpiSend (s_ans_ok);
     }
 
@@ -309,8 +298,22 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
     else if (!strncmp(msg, "stop", sizeof("stop") - 1))
     {
         Treatment_Stop ();
+	Comms_Bridge_Channel1_Msg (msg);
         UsartRpiSend (s_ans_ok);
     }
     
 }
+
+
+void Comms_Bridge_Channel1_Msg (char * msg_for_ch1)
+{
+    char buff [128];    
+    
+    // bridge the message
+    sprintf(buff, "%s\n", msg_for_ch1);
+    UsartChannel1Send (buff);
+    
+}
+
+
 //---- End of File ----//

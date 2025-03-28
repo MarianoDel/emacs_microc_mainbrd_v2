@@ -101,6 +101,7 @@ const unsigned short sinusoidal_table [] = {12,25,37,50,62,75,87,100,112,125,
 
 const unsigned short dac_offset = 350;
 volatile unsigned short signals_timeout = 0;
+unsigned char update_sync_online = 0;
 
 
 // Module Private Functions ----------------------------------------------------
@@ -174,6 +175,10 @@ resp_e Signals_Square (treatment_conf_t * pconf)
         // if POLARITY_ALT, set timer and start
         // freq = 0.3Hz psc: 6399 arr: 33333 arr_4: 8333
         Timer_Polarity (pconf->polarity);
+	if (pconf->polarity == POLARITY_ALT)
+	    update_sync_online = 1;
+	else
+	    update_sync_online = 0;
 
         // all updates done!
         Signals_Reset_Frequency_Intensity_Change_Flag ();
@@ -185,7 +190,6 @@ resp_e Signals_Square (treatment_conf_t * pconf)
     case SQUARE_FIRST_EDGE:
         if (Timer_Square_Signal_Ended())
         {
-	    Sync_Ch1_On();
             Timer_Square_Signal_Reset();
             Signals_Set_Rising_Ouput (pconf);
             square_state++;
@@ -204,7 +208,6 @@ resp_e Signals_Square (treatment_conf_t * pconf)
     case SQUARE_SECOND_EDGE:
         if (Timer_Square_Signal_Ended())
         {
-	    Sync_Ch1_Off();
             Timer_Square_Signal_Reset();
             Signals_Set_Falling_Ouput (pconf);
             square_state++;
@@ -228,6 +231,15 @@ resp_e Signals_Square (treatment_conf_t * pconf)
     default:
         square_state = SQUARE_INIT;
         break;
+    }
+
+    // check continuosly
+    if (update_sync_online)
+    {
+	if (TIM8_Check_CCR())
+	    Sync_Ch1_On();
+	else
+	    Sync_Ch1_Off();
     }
 
     return resp;

@@ -82,6 +82,8 @@ void TIM8_Update_CH1 (unsigned short a);
 void TIM8_Update_CH2 (unsigned short a);
 void TIM8_Update_CH3 (unsigned short a);
 void TIM8_Update_CH4 (unsigned short a);
+
+unsigned char TIM8_Check_CCR (void);
 #endif
 
 #endif /* _TIMER_H_ */
