@@ -22,6 +22,7 @@
 #include "usart.h"
 
 #include "comms.h"
+#include "comms_conn.h"
 #include "treatment.h"
 #include "test_functions.h"
 #include "battery.h"
@@ -103,12 +104,20 @@ int main (void)
     //-- Comms with rasp
     Ena_Rpi_On ();
     UsartRpiConfig ();
-    Wait_ms(500);
+    Wait_ms(200);
 
     //-- Comms with ch1
     Ena_Ch1_On ();
     UsartChannel1Config ();
-    Wait_ms(500);
+    Wait_ms(200);
+
+    //-- Comms with Connectors Brd
+    UsartConnConfig ();
+    Wait_ms(200);
+
+    //-- Comms with Encoders Brd
+    UsartEncConfig ();
+    Wait_ms(200);
     
     //-- TIM1 for signals module sequence ready
     TIM6_Init();    // for square times
@@ -118,8 +127,8 @@ int main (void)
     UsartRpiSend("\r\nMicro Current - Main Board v2.0 - starting...\r\n");
     Ena_Ch1_On();
     Ena_Ch2_On();
-    Ena_Ch3_On();
-    Ena_Ch4_On();
+    // Ena_Ch3_On();    // 3 and 4 only enable by connectors
+    // Ena_Ch4_On();
     
     //-- Main Loop --------------------------
     while (1)
@@ -127,8 +136,11 @@ int main (void)
         // // update the antennas module states
         // AntennaUpdateStates ();
 
-        // update the channels comms
+        // update the rpi comms
         Comms_Update ();
+
+	// update Connectors Brd comms
+	Comms_Conn_Update ();
 
         // update the probe comms
         // Probe_Comms_Update ();

@@ -75,6 +75,7 @@ SRC += ./src/dac.c
 
 # SRC += ./src/dsp.c
 SRC += ./src/comms.c
+SRC += ./src/comms_conn.c
 SRC += ./src/utils.c
 SRC += ./src/test_functions.c
 

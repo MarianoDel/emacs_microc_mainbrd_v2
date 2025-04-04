@@ -5,11 +5,11 @@
 // ## @TAGS:   Global
 // ## @CPU:    STM32F103
 // ##
-// #### COMMS.H ###############################
+// #### COMMS_CONN.H ##########################
 //---------------------------------------------
 
-#ifndef _COMMS_H_
-#define _COMMS_H_
+#ifndef _COMMS_CONN_H_
+#define _COMMS_CONN_H_
 
 //---- Includes to help the Defines ----------
 
@@ -19,9 +19,7 @@
 
 
 // Module Exported Functions ---------------------------------------------------
-void Comms_Timeouts (void);
-void Comms_Update (void);
-// static void Comms_Messages (char * msg_str);
-unsigned char Comms_Rpi_Answering (void);
+void Comms_Conn_Update (void);
 
-#endif    /* _COMMS_H_ */
+
+#endif    /* _COMMS_CONN_H_ */

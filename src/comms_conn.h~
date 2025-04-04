@@ -16,6 +16,10 @@
 
 
 //---- Configurations Defines --------------------
+#define RpiSend(X)    Usart1Send(X)
+#define RpiHaveData()    Usart1HaveData()
+#define RpiHaveDataReset()    Usart1HaveDataReset()
+#define RpiReadBuffer(X,Y)    Usart1ReadBuffer(X,Y)
 
 
 // Module Exported Functions ---------------------------------------------------
