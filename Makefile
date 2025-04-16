@@ -76,8 +76,13 @@ SRC += ./src/dac.c
 # SRC += ./src/dsp.c
 SRC += ./src/comms.c
 SRC += ./src/comms_conn.c
+SRC += ./src/comms_channel1.c
+SRC += ./src/audio.c
+
+
 SRC += ./src/utils.c
 SRC += ./src/test_functions.c
+
 
 SRC += ./src/battery.c
 SRC += ./src/treatment.c

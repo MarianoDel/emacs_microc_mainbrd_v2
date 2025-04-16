@@ -3,11 +3,11 @@
 // ## @Editor: Emacs - ggtags
 // ## @TAGS:   Global
 // ##
-// #### COMMS_CONN.C ######################################
+// #### COMMS_CH1.C ######################################
 //---------------------------------------------------------
 
 // Includes --------------------------------------------------------------------
-#include "comms_conn.h"
+#include "comms_ch1.h"
 #include "hard.h"
 
 #include "usart_channels.h"
@@ -19,7 +19,7 @@
 
 
 // Module Private Types Constants and Macros -----------------------------------
-#define SIZEOF_CONN_BUFF    128
+#define SIZEOF_CH1_BUFF    128
 // #define COMMS_TT_RELOAD    3000
 
 
@@ -27,44 +27,45 @@
 
 
 // Globals ---------------------------------------------------------------------
-char conn_buff [SIZEOF_CONN_BUFF];
+char ch1_buff [SIZEOF_CH1_BUFF];
 // volatile unsigned short comms_timeout = 0;
 unsigned char last_plates = 0;
 unsigned char last_intel_prb = 0;
 
 
 // Module Private Functions ----------------------------------------------------
-static void Comms_Conn_Messages (char * msg_str);
-static unsigned char Comms_Conn_Hex2Int (char ch);
+static void Comms_Ch1_Messages (char * msg_str);
+
 
 
 // Module Functions ------------------------------------------------------------
-void Comms_Conn_Update (void)
+void Comms_Ch1_Update (void)
 {
-    if (UsartConnHaveData())
+    if (UsartCh1HaveData())
     {
-        UsartConnHaveDataReset();
-        UsartConnReadBuffer(conn_buff, SIZEOF_CONN_BUFF);
-        Comms_Conn_Messages(conn_buff);
+        UsartCh1HaveDataReset();
+        UsartCh1ReadBuffer(ch1_buff, SIZEOF_CH1_BUFF);
+        Comms_Ch1_Messages(ch1_buff);
     }
 }
 
 
-static void Comms_Conn_Messages (char * msg_str)
+static void Comms_Ch1_Messages (char * msg_str)
 {
+    Comms_Bridge_Rpi_Msg (msg);
     unsigned char plates_up;
     unsigned char plates_dw;
     unsigned char plates;
     unsigned char intel_prb;    
     
-    // string getted: "conn 0x%02x 0x%02x\r\n"
+    // string getted: "ch1 0x%02x 0x%02x\r\n"
     // check if enable is needed, broadcast or channel
-    if (strncmp (msg_str, "conn 0x", sizeof("conn 0x") - 1) == 0)
+    if (strncmp (msg_str, "ch1 0x", sizeof("ch1 0x") - 1) == 0)
     {
-	// get the conn data
-	plates_up = Comms_Conn_Hex2Int (*(msg_str + sizeof("conn 0x") - 1));
-	plates_dw = Comms_Conn_Hex2Int (*(msg_str + sizeof("conn 0xx") - 1));
-	intel_prb = Comms_Conn_Hex2Int (*(msg_str + sizeof("conn 0xxx 0xx") - 1));
+	// get the ch1 data
+	plates_up = Comms_Ch1_Hex2Int (*(msg_str + sizeof("ch1 0x") - 1));
+	plates_dw = Comms_Ch1_Hex2Int (*(msg_str + sizeof("ch1 0xx") - 1));
+	intel_prb = Comms_Ch1_Hex2Int (*(msg_str + sizeof("ch1 0xxx 0xx") - 1));
 
 	plates = plates_up;
 	plates <<= 4;
@@ -109,18 +110,15 @@ static void Comms_Conn_Messages (char * msg_str)
 }
 
 
-static unsigned char Comms_Conn_Hex2Int (char ch)
+void Comms_Bridge_Rpi_Msg (char * msg_for_rpi)
 {
-    unsigned char a = 0;
+    char buff [128];    
     
-    if ((ch >= '0') && (ch <= '9'))
-       a = ch - '0';
-    if ((ch >= 'A') && (ch <= 'F'))
-       a = ch - 'A' + 10;
-    if ((ch >= 'a') && (ch <= 'f'))
-       a = ch - 'a' + 10;
-
-    return a;
+    // bridge the message
+    sprintf(buff, "%s\n", msg_for_rpi);
+    UsartRpiSend (buff);
+    
 }
+
 
 //---- End of File ----//

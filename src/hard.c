@@ -262,4 +262,15 @@ void Hard_GetVoltages_Complete (void)
     
 }
 
+
+void Speaker_On (void)
+{
+    ENA_SPEAKER_ON;
+}
+
+
+void Speaker_Off (void)
+{
+    ENA_SPEAKER_OFF;
+}
 //--- end of file ---//

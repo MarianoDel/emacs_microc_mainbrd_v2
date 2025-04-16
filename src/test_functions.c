@@ -20,6 +20,7 @@
 #include "dma.h"
 #include "dac.h"
 #include "tim.h"
+#include "audio.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,9 +49,6 @@ void TF_Enable_Rpi (void);
 void TF_Enable_Encoder (void);
 
 void TF_UsartChannel1_Loop (void);
-void TF_UsartChannel2_Loop (void);
-void TF_UsartChannel3_Loop (void);
-void TF_UsartChannel4_Loop (void);
 
 void TF_UsartRpi_Tx (void);
 void TF_UsartRpi_String (void);
@@ -62,6 +60,7 @@ void TF_Tim6_Int (void);
 // void TF_Adc_Usart1_Voltages (void);
 
 void TF_Square_Sweep (void);
+void TF_Audio_Signals (void);
 
 
 // Module Functions ------------------------------------------------------------
@@ -76,10 +75,7 @@ void TF_Hardware_Tests (void)
     // TF_Enable_Rpi ();
     // TF_Enable_Encoder ();
 
-    TF_UsartChannel1_Loop ();
-    // TF_UsartChannel2_Loop ();
-    // TF_UsartChannel3_Loop ();
-    // TF_UsartChannel4_Loop ();    
+    // TF_UsartChannel1_Loop ();
 
     // TF_UsartRpi_Tx ();
     // TF_UsartRpi_String ();
@@ -95,6 +91,7 @@ void TF_Hardware_Tests (void)
     // TF_Int_Pb6();
 
     // TF_Square_Sweep ();
+    TF_Audio_Signals ();
 }
 
 
@@ -263,90 +260,6 @@ void TF_UsartChannel1_Loop (void)
         //     if (strncmp(buff, "Mariano", sizeof("Mariano") - 1) == 0)
         //         SYNC_CH1_ON;
         // }
-    }
-}
-
-
-// place a shortcut on IC4 2 & IC3 4
-void TF_UsartChannel2_Loop (void)
-{
-    char buff [100];
-    
-    UsartChannel2Config();
-    
-    while (1)
-    {
-        if (!timer_standby)
-        {
-            UsartChannel2Send("Mariano\n");
-            timer_standby = 2000;
-            if (SYNC_CH1)
-                SYNC_CH1_OFF;
-        }
-
-        if (UsartChannel2HaveData())
-        {
-            UsartChannel2HaveDataReset();
-            UsartChannel2ReadBuffer(buff, 100);
-            if (strncmp(buff, "Mariano", sizeof("Mariano") - 1) == 0)
-                SYNC_CH1_ON;
-        }
-    }
-}
-
-
-// place a shortcut on IC4 2 & IC3 4
-void TF_UsartChannel3_Loop (void)
-{
-    char buff [100];
-    
-    UsartChannel3Config();
-    
-    while (1)
-    {
-        if (!timer_standby)
-        {
-            UsartChannel3Send("Mariano\n");
-            timer_standby = 2000;
-            if (SYNC_CH1)
-                SYNC_CH1_OFF;
-        }
-
-        if (UsartChannel3HaveData())
-        {
-            UsartChannel3HaveDataReset();
-            UsartChannel3ReadBuffer(buff, 100);
-            if (strncmp(buff, "Mariano", sizeof("Mariano") - 1) == 0)
-                SYNC_CH1_ON;
-        }
-    }
-}
-
-
-// place a shortcut on IC4 2 & IC3 4
-void TF_UsartChannel4_Loop (void)
-{
-    char buff [100];
-    
-    UsartChannel4Config();
-    
-    while (1)
-    {
-        if (!timer_standby)
-        {
-            UsartChannel4Send("Mariano\n");
-            timer_standby = 2000;
-            if (SYNC_CH1)
-                SYNC_CH1_OFF;
-        }
-
-        if (UsartChannel4HaveData())
-        {
-            UsartChannel4HaveDataReset();
-            UsartChannel4ReadBuffer(buff, 100);
-            if (strncmp(buff, "Mariano", sizeof("Mariano") - 1) == 0)
-                SYNC_CH1_ON;
-        }
     }
 }
 
@@ -618,6 +531,44 @@ void TF_Square_Sweep (void)
 	}
 	Timer_Polarity (POLARITY_NEG);    // or null polarity
 	Wait_ms(5000);
+    }
+}
+
+
+void TF_Audio_Signals (void)
+{
+    //-- ADC without DMA
+    // AdcConfig();
+
+    //-- DAC init for signal generation
+    DAC_Config ();
+    DAC_Output1(0);
+    DAC_Output2(0);    
+    
+    //-- TIM1 for signals module sequence ready
+    TIM5_Init();    // for audio sine
+
+    Audio_Init();
+
+    unsigned char up_or_dwn = 0;
+    while (1)
+    {
+	if (!timer_standby)
+	{
+	    timer_standby = 6000;
+
+            // Audio_Start_Tone(1000, 400);
+	    if (up_or_dwn)
+	    {
+		up_or_dwn = 0;
+		Audio_SM (AUDIO_START_UP_EVENT);
+	    }
+	    else
+	    {
+		up_or_dwn = 1;
+		Audio_SM (AUDIO_START_DWN_EVENT);
+	    }
+	}
     }
 }
 

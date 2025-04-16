@@ -13,6 +13,7 @@
 #include "stm32f10x.h"
 #include "hard.h"
 
+#include "audio.h"
 
 // Module Private Types Constants and Macros -----------------------------------
 #define RCC_TIM1_CLK    (RCC->APB2ENR & 0x00000800)
@@ -307,11 +308,6 @@ void TIM4_Update_CH3 (unsigned short a)
 //-- Timer 5 Functions --
 void TIM5_Init (void)
 {
-//    Counter Register (TIMx_CNT)
-//    Prescaler Register (TIMx_PSC)
-//    Auto-Reload Register (TIMx_ARR)
-//    The counter clock frequency CK_CNT is equal to fCK_PSC / (PSC[15:0] + 1)
-
     //---- Clk ----//
     if (!RCC_TIM5_CLK)
         RCC_TIM5_CLKEN;
@@ -320,27 +316,52 @@ void TIM5_Init (void)
     TIM5->CR1 = 0x0000;        //clk int / 1; upcounting;
     TIM5->CR2 = 0x0000;
 
-    TIM5->CCMR1 = 0x6060;    //CH1 CH2 output PWM mode 2 (channel active TIM5->CNT < TIM5->CCR1)
-    TIM5->CCER |= TIM_CCER_CC2E | TIM_CCER_CC1E;    // ch1 ch2 enabled
+    // TIM5->CCMR1 = 0x6060;    //CH1 CH2 output PWM mode 2 (channel active TIM5->CNT < TIM5->CCR1)
+    // TIM5->CCER |= TIM_CCER_CC2E | TIM_CCER_CC1E;    // ch1 ch2 enabled
 
     // try to be near 7KHz
-    TIM5->ARR = DUTY_100_PERCENT - 1;    //1000 pwm points freq-> 72MHz / 10 = 7.2KHz
-    TIM5->PSC = 9;
+    TIM5->ARR = 0;
+    TIM5->PSC = 64 - 1;    // 1us tick
     
-    // Enable the timer
+    // Enable timer with ints
+    TIM5->DIER |= TIM_DIER_UIE;
+    // TIM5->CR1 |= TIM_CR1_CEN;
+
+    // NVIC enable for timer 5
+    NVIC_EnableIRQ(TIM5_IRQn);
+    NVIC_SetPriority(TIM5_IRQn, 9);
+    
+}
+
+
+void TIM5_Stop (void)
+{
+    TIM5->CR1 &= ~(TIM_CR1_CEN);
+    TIM5->CNT = 0;
+}
+
+
+void TIM5_Start (void)
+{
     TIM5->CR1 |= TIM_CR1_CEN;
 }
 
 
-void TIM5_Update_CH1 (unsigned short a)
+void TIM5_Set_Arr (unsigned short new_arr)
 {
-    TIM5->CCR1 = a;
+    // TIM5->CR1 &= ~(TIM_CR1_CEN);
+    TIM5->CNT = 0;
+    TIM5->ARR = new_arr;
+    // TIM5->CR1 |= TIM_CR1_CEN;
 }
 
 
-void TIM5_Update_CH2 (unsigned short a)
+void TIM5_IRQHandler (void)
 {
-    TIM5->CCR2 = a;
+    if (TIM5->SR & TIM_SR_UIF)
+        TIM5->SR = ~(TIM_SR_UIF);
+
+    Audio_Timer_Interrupt_Handler ();    
 }
 
 

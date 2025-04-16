@@ -245,4 +245,8 @@ unsigned char Left_Is_On (void);
 void Sync_Ch1_Off (void);
 void Sync_Ch1_On (void);
 
+
+void Speaker_On (void);
+void Speaker_Off (void);
+
 #endif

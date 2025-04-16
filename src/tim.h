@@ -53,8 +53,10 @@ void TIM4_Update_CH3 (unsigned short a);
 #ifdef STM32F10X_HD
 // Timer 5 Functions
 void TIM5_Init (void);
-void TIM5_Update_CH1 (unsigned short a);
-void TIM5_Update_CH2 (unsigned short a);
+void TIM5_Stop (void);
+void TIM5_Start (void);
+void TIM5_Set_Arr (unsigned short new_arr);
+void TIM5_IRQHandler (void);
 
 void TIM6_Init(void);
 void TIM6_IRQHandler (void);

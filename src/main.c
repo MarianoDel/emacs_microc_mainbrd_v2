@@ -23,6 +23,7 @@
 
 #include "comms.h"
 #include "comms_conn.h"
+#include "comms_channel1.h"
 #include "treatment.h"
 #include "test_functions.h"
 #include "battery.h"
@@ -83,7 +84,7 @@ int main (void)
         SysTickError();
 
     // Hardware Tests
-    // TF_Hardware_Tests ();
+    TF_Hardware_Tests ();
 
     // --- main program inits. ---
 
@@ -142,8 +143,8 @@ int main (void)
 	// update Connectors Brd comms
 	Comms_Conn_Update ();
 
-        // update the probe comms
-        // Probe_Comms_Update ();
+        // update the ch1 & probe comms
+        Comms_Channel1_Update ();
 
         // update treatment state
         Treatment_Manager();
