@@ -26,6 +26,7 @@
 #include "comms_channel1.h"
 #include "treatment.h"
 #include "test_functions.h"
+#include "audio.h"
 #include "battery.h"
 
 
@@ -84,7 +85,7 @@ int main (void)
         SysTickError();
 
     // Hardware Tests
-    TF_Hardware_Tests ();
+    // TF_Hardware_Tests ();
 
     // --- main program inits. ---
 
@@ -100,7 +101,11 @@ int main (void)
     //-- DAC init for signal generation
     DAC_Config ();
     DAC_Output1(0);
-    DAC_Output2(0);    
+    DAC_Output2(0);
+
+    //-- Audio things init
+    TIM5_Init();    // for audio sine
+    Audio_Init();
     
     //-- Comms with rasp
     Ena_Rpi_On ();

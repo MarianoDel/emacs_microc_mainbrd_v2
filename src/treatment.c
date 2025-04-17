@@ -20,7 +20,7 @@
 #include "signals.h"
 #include "utils.h"
 #include "timer_signals.h"
-
+#include "audio.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -69,6 +69,7 @@ void Treatment_Manager (void)
 	    UsartRpiSend("starting sinusoidal\r\n");
 	    Signals_Sinusoidal_Reset ();
 	    treat_state = TREATMENT_SINE_RUNNING;
+	    Audio_SM(AUDIO_START_UP_EVENT);
         }
 
         if (Treatment_Square_Start_Flag ())
@@ -77,6 +78,7 @@ void Treatment_Manager (void)
 	    UsartRpiSend("starting square\r\n");
 	    Signals_Square_Reset ();
 	    treat_state = TREATMENT_SQUARE_RUNNING;
+	    Audio_SM(AUDIO_START_UP_EVENT);	    
 	}	
 
         break;
@@ -105,6 +107,7 @@ void Treatment_Manager (void)
         Signals_Stop ();
 
         UsartRpiSend("stopped\r\n");
+	Audio_SM(AUDIO_START_DWN_EVENT);
 
 	Timer_Polarity (POLARITY_NEG);    // or null polarity
 	treat_state = TREATMENT_STANDBY;

@@ -20,6 +20,7 @@
 #include "dma.h"
 #include "dac.h"
 #include "tim.h"
+#include "signals.h"
 #include "audio.h"
 
 #include <stdio.h>
@@ -237,7 +238,7 @@ void TF_Enable_Encoder (void)
 // place a shortcut on IC4 2 & IC3 4
 void TF_UsartChannel1_Loop (void)
 {
-    char buff [100];
+    // char buff [100];
     
     UsartChannel1Config();
 
