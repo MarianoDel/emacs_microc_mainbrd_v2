@@ -70,7 +70,7 @@ void Comms_Bridge_Rpi_Msg (char * msg_for_rpi)
     char buff [128];    
     
     // bridge the message
-    sprintf(buff, "%s\n", msg_for_rpi);
+    sprintf(buff, "%s\r\n", msg_for_rpi);
     UsartRpiSend (buff);
     
 }

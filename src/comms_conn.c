@@ -83,23 +83,23 @@ static void Comms_Conn_Messages (char * msg_str)
 	    UsartRpiSend(buff);
 
 	    // check enable or disable
-	    if ((plates & 0xC0) == 0xC0)
+	    if ((plates & 0x03) == 0x03)
 		Ena_Ch4_On();
 	    else
 		Ena_Ch4_Off();
 
-	    if ((plates & 0x30) == 0x30)
+	    if ((plates & 0x0C) == 0x0C)
 		Ena_Ch3_On();
 	    else
 		Ena_Ch3_Off();
 
-	    if ((plates & 0x0C) == 0x0C)
+	    if ((plates & 0x30) == 0x30)
 		Ena_Ch2_On();
 	    else
 		Ena_Ch2_Off();		
 
-	    if (((plates & 0x03) == 0x03) ||
-		(intel_prb))
+	    if (((plates & 0xC0) == 0xC0) ||
+		((plates & 0x40) && (intel_prb)))
 		Ena_Ch1_On();
 	    else
 		Ena_Ch1_Off();

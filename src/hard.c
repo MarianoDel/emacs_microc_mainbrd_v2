@@ -153,6 +153,12 @@ unsigned char Left_Is_On (void)
 }
 
 
+unsigned char Sync_Ch1_Is_On (void)
+{
+    return SYNC_CH1;
+}
+
+
 void Sync_Ch1_On (void)
 {
     SYNC_CH1_ON;

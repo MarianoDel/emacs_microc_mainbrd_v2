@@ -41,6 +41,8 @@ volatile unsigned short comms_timeout = 0;
 static void Comms_Messages (char * msg_str);
 static void Comms_Messages_For_Channels_Treatment (char * msg_str);
 static void Comms_Bridge_Channel1_Msg (char * msg_for_ch1);
+void Comms_Bridge_Conn_Msg (char * local_buff);
+static void Comms_Bridge_Rpi_With_Connectors (void);
 
 
 // Module Functions ------------------------------------------------------------
@@ -165,6 +167,11 @@ static void Comms_Messages (char * msg_str)
     //     Bit_Bang_Tx_Send("rpi up\n");
     // }
     
+    else if (strncmp (msg_str, "bridge conn", sizeof("bridge conn") - 1) == 0)
+    {
+	Comms_Bridge_Rpi_With_Connectors ();
+    }
+
     else if (strncmp (msg_str, "sup", sizeof("sup") - 1) == 0)
     {
         // not implemented yet!
@@ -176,9 +183,7 @@ static void Comms_Messages (char * msg_str)
 	// other messages
 	Comms_Messages_For_Channels_Treatment (msg_str);
 	// UsartRpiSend(s_ans_nok);
-    }
-     
-
+    }    
 }
 
 
@@ -243,6 +248,7 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         if (resp == resp_ok)
 	{
 	    Comms_Bridge_Channel1_Msg (msg);
+	    Comms_Bridge_Conn_Msg (msg);
             UsartRpiSend (s_ans_ok);
 	}
         else
@@ -310,10 +316,54 @@ void Comms_Bridge_Channel1_Msg (char * msg_for_ch1)
     char buff [128];    
     
     // bridge the message
-    sprintf(buff, "%s\n", msg_for_ch1);
+    sprintf(buff, "%s\r\n", msg_for_ch1);
     UsartChannel1Send (buff);
     
 }
 
 
+void Comms_Bridge_Rpi_With_Connectors (void)
+{
+    char local_buff [SIZEOF_LOCAL_BUFF];
+
+    UsartRpiSend ("\r\n Bridge to Connectors Board -- bridge done to finish --\r\n");
+    while (1)
+    {
+	if (UsartRpiHaveData())
+	{
+	    UsartRpiHaveDataReset();
+	    UsartRpiReadBuffer(local_buff, SIZEOF_LOCAL_BUFF);
+
+	    if (!strncmp(local_buff, "bridge done", sizeof("bridge done") - 1))
+	    {
+		UsartRpiSend ("\r\n Back to normal\r\n");
+		return;
+	    }
+	    else
+	    {
+		// bridge the message
+		Comms_Bridge_Conn_Msg (local_buff);
+	    }
+	}
+
+	if (UsartConnHaveData())
+	{
+	    UsartConnHaveDataReset();
+	    UsartConnReadBuffer(local_buff, SIZEOF_LOCAL_BUFF);
+
+	    // bridge the message
+	    char buff_snd [130];    
+	    sprintf(buff_snd, "%s\r\n", local_buff);
+	    UsartRpiSend (buff_snd);
+	}
+    }
+}
+
+
+void Comms_Bridge_Conn_Msg (char * local_buff)
+{
+    char buff_snd [130];    
+    sprintf(buff_snd, "%s\r\n", local_buff);
+    UsartConnSend (buff_snd);
+}
 //---- End of File ----//
