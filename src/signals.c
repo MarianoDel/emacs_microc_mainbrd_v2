@@ -501,7 +501,8 @@ void Signals_Calc_Square_Outputs (treatment_conf_t * pconf)
 void Signals_Set_Rising_Ouput (treatment_conf_t * pconf)
 {
     unsigned short to_dac;
-    to_dac = pconf->itov_high + dac_offset + 90;
+    // to_dac = pconf->itov_high + dac_offset + 90;
+    to_dac = pconf->itov_high;    // ch2 ch3 ch4 no offset needed
 
     if (to_dac > 4095)
         to_dac = 4095;
@@ -513,8 +514,8 @@ void Signals_Set_Rising_Ouput (treatment_conf_t * pconf)
 void Signals_Set_Falling_Ouput (treatment_conf_t * pconf)
 {
     unsigned short to_dac;
-    to_dac = pconf->itov_low + dac_offset + 90;
-
+    // to_dac = pconf->itov_low + dac_offset + 90;
+    to_dac = pconf->itov_low;    // ch2 ch3 ch4 no offset needed
     if (to_dac > 4095)
         to_dac = 4095;
     

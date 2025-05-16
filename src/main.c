@@ -130,10 +130,10 @@ int main (void)
     
     //-- Welcome Code
     UsartRpiSend("\r\nMicro Current - Main Board v2.0 - starting...\r\n");
-    // Ena_Ch1_On();
-    // Ena_Ch2_On();
-    // Ena_Ch3_On();    // 3 and 4 only enable by connectors
-    // Ena_Ch4_On();
+
+    //-- Set Default Config and send it to connectors
+    UsartConnSend("\r\n");
+    UsartConnSend("polarity alt\r\n");
     
     //-- Main Loop --------------------------
     while (1)

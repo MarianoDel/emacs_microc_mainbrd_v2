@@ -98,12 +98,18 @@ static void Comms_Conn_Messages (char * msg_str)
 	    else
 		Ena_Ch2_Off();		
 
-	    if (((plates & 0xC0) == 0xC0) ||
-		((plates & 0x40) && (intel_prb)))
+	    if (intel_prb)
+	    {
+		if (plates & 0x40)
+		    Ena_Ch1_On();
+		else
+		    Ena_Ch1_Off();
+	    }
+	    else if ((plates & 0xC0) == 0xC0)
 		Ena_Ch1_On();
 	    else
 		Ena_Ch1_Off();
-	    
+
 	}
     }
 }
