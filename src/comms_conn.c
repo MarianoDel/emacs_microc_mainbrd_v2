@@ -50,6 +50,13 @@ void Comms_Conn_Update (void)
 }
 
 
+unsigned char comms_conn_bridge = 0;
+void Comms_Conn_Bridge_Once (void)
+{
+    comms_conn_bridge = 1;
+}
+
+
 static void Comms_Conn_Messages (char * msg_str)
 {
     unsigned char plates_up;
@@ -70,15 +77,22 @@ static void Comms_Conn_Messages (char * msg_str)
 	plates <<= 4;
 	plates |= plates_dw;
 
+	if (comms_conn_bridge)
+	{
+	    char buff [128];
+	    sprintf(buff, "%s\r\n", msg_str);	    
+	    UsartRpiSend(buff);
+	    comms_conn_bridge = 0;
+	}
+
 	if ((plates != last_plates) ||
 	    (intel_prb != last_intel_prb))
 	{
-	    char buff [128];
-
 	    last_plates = plates;
 	    last_intel_prb = intel_prb;
 	    
 	    // sprintf(buff, "%s new plates: 0x%02x probe: 0x%02x\r\n", msg_str, plates, intel_prb);
+	    char buff [128];
 	    sprintf(buff, "%s\r\n", msg_str);	    
 	    UsartRpiSend(buff);
 

@@ -32,6 +32,9 @@
 
 
 //-------- Type of Program and Features ----------------
+#define RPI_CONN_ONLY_ONE    // rpi goes up with the first data
+// #define RPI_CONN_BY_TIMER    // rpi goes up or down with timer
+
 
 
 //-------- Oscillator and Crystal selection (Freq in startup_clocks.h) ---

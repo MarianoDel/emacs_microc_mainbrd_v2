@@ -52,7 +52,23 @@ void Comms_Timeouts (void)
         comms_timeout--;
 }
 
+#ifdef RPI_CONN_ONLY_ONE
+unsigned char rpi_answers = 0;
+unsigned char Comms_Rpi_Answering (void)
+{
+    if (rpi_answers)
+	return 1;
+    else if (comms_timeout)
+    {
+	rpi_answers = 1;
+        return 1;
+    }
+    
+    return 0;
+}
+#endif
 
+#ifdef RPI_CONN_BY_TIMER
 unsigned char Comms_Rpi_Answering (void)
 {
     if (comms_timeout)
@@ -60,7 +76,7 @@ unsigned char Comms_Rpi_Answering (void)
     
     return 0;
 }
-
+#endif
 
 void Comms_Update (void)
 {
@@ -162,16 +178,16 @@ static void Comms_Messages (char * msg_str)
         }
     }
     
-    // else if (strncmp (msg_str, "rpi is up", sizeof("rpi is up") - 1) == 0)
-    // {
-    //     Bit_Bang_Tx_Send("rpi up\n");
-    // }
-    
+    else if (strncmp (msg_str, "conn", sizeof("conn") - 1) == 0)
+    {
+	Comms_Bridge_Conn_Msg (msg_str);
+    }
+
     else if (strncmp (msg_str, "bridge conn", sizeof("bridge conn") - 1) == 0)
     {
 	Comms_Bridge_Rpi_With_Connectors ();
     }
-
+    
     else if (strncmp (msg_str, "sup", sizeof("sup") - 1) == 0)
     {
         // not implemented yet!
@@ -362,8 +378,15 @@ void Comms_Bridge_Rpi_With_Connectors (void)
 
 void Comms_Bridge_Conn_Msg (char * local_buff)
 {
-    char buff_snd [130];    
+    char buff_snd [130] = { 0 };
+    // char other_buff [130];
     sprintf(buff_snd, "%s\r\n", local_buff);
+    // unsigned char size = strlen (buff_snd);
+    // sprintf(other_buff, "size: %d sent: %s", size, buff_snd);
+    // UsartRpiSend(other_buff);
     UsartConnSend (buff_snd);
+    Comms_Conn_Bridge_Once();
+    
+
 }
 //---- End of File ----//

@@ -20,9 +20,6 @@
 
 // Module Exported Functions ---------------------------------------------------
 void Comms_Channel1_Update (void);
-void Comms_Channel1_Send_Default_Set (void);
-void Comms_Channel1_Send_Default_Reset (void);
-unsigned char Comms_Channel1_Send_Default_Get (void);
 
 
 #endif    /* _COMMS_CHANNEL1_H_ */

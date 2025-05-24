@@ -308,7 +308,8 @@ resp_e Signals_Sinusoidal (treatment_conf_t * pconf)
             {
                 unsigned short dac_saved = 0;
                 dac_saved = Signals_Calc_Sinusoidal_High (pconf, *psine);
-                Signal_Set_Sinusoidal_Cut_Last(dac_saved + dac_offset);
+                // Signal_Set_Sinusoidal_Cut_Last(dac_saved + dac_offset);
+		Signal_Set_Sinusoidal_Cut_Last(dac_saved);    // ch2 ch3 ch4 no offset needed
             }
 
             if (psine < &sinusoidal_table[TABLE_SIZE - 1])
@@ -339,7 +340,8 @@ resp_e Signals_Sinusoidal (treatment_conf_t * pconf)
             {
                 unsigned short dac_saved = 0;
                 dac_saved = Signals_Calc_Sinusoidal_Low (pconf, *psine);
-                Signal_Set_Sinusoidal_Cut_Last(dac_saved + dac_offset);
+                // Signal_Set_Sinusoidal_Cut_Last(dac_saved + dac_offset);
+		Signal_Set_Sinusoidal_Cut_Last(dac_saved);    // ch2 ch3 ch4 no offset needed
             }
 
             if (psine < &sinusoidal_table[TABLE_SIZE - 1])
@@ -582,7 +584,7 @@ unsigned short Signals_Set_Sinusoidal_High (treatment_conf_t * pconf, unsigned s
     unsigned short dac_value = 0;
 
     dac_value = Signals_Calc_Sinusoidal_High (pconf, value);
-    dac_value += dac_offset;
+    // dac_value += dac_offset;    // ch2 ch3 ch4 no offset needed
 
     if (dac_value > 4095)
         dac_value = 4095;
@@ -612,16 +614,13 @@ unsigned short Signals_Set_Sinusoidal_Low (treatment_conf_t * pconf, unsigned sh
     unsigned short dac_value = 0;
 
     dac_value = Signals_Calc_Sinusoidal_Low (pconf, value);
-    dac_value += dac_offset;
+    // dac_value += dac_offset;    // ch2 ch3 ch4 no offset needed
 
     if (dac_value > 4095)
         dac_value = 4095;
     
     DAC_Output1 (dac_value);
     
-    // dac_value = Signals_Calc_Sinusoidal_Low (pconf, value);
-    // DAC_Output1 (dac_value);
-
     return dac_value;
 }
 

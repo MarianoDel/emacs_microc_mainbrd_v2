@@ -13,6 +13,7 @@
 #include "adc.h"
 #include "tim.h"
 #include "usart.h"
+#include "usart_channels.h"
 
 #include <stdio.h>
 
@@ -37,9 +38,11 @@ void Ena_Rpi_On (void)
 }
 
 
+extern void Channel1_Send_Default (void);
 void Ena_Ch1_On (void)
 {
     ENA_CH1_ON;
+    Channel1_Send_Default ();
 }
 
 
@@ -93,6 +96,9 @@ void Ena_Rpi_Off (void)
 void Ena_Ch1_Off (void)
 {
     ENA_CH1_OFF;
+    // probe de act on UI
+    UsartRpiSend("\r\n");
+    UsartRpiSend("probe none\r\n");
 }
 
 

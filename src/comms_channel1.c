@@ -48,7 +48,6 @@ void Comms_Channel1_Update (void)
 }
 
 
-#include "tim.h"
 static void Comms_Channel1_Messages (char * msg_str)
 {
     Comms_Bridge_Rpi_Msg (msg_str);
