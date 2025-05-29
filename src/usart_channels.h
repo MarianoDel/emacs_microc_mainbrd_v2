@@ -34,12 +34,12 @@
 #define UsartConnHaveDataReset()    Uart4HaveDataReset()
 #define UsartConnShutdownn()    Uart4Shutdown()
 
-#define UsartChannel4Config()    Uart5Config()
-#define UsartChannel4Send(X)    Uart5Send(X)
-#define UsartChannel4ReadBuffer(X,Y)    Uart5ReadBuffer(X,Y)
-#define UsartChannel4HaveData()    Uart5HaveData()
-#define UsartChannel4HaveDataReset()    Uart5HaveDataReset()
-#define UsartChannel4Shutdownn()    Uart5Shutdown()
+#define UsartSupplyConfig()    Uart5Config()
+#define UsartSupplySend(X)    Uart5Send(X)
+#define UsartSupplyReadBuffer(X,Y)    Uart5ReadBuffer(X,Y)
+#define UsartSupplyHaveData()    Uart5HaveData()
+#define UsartSupplyHaveDataReset()    Uart5HaveDataReset()
+#define UsartSupplyShutdownn()    Uart5Shutdown()
 
 #define UsartRpiConfig()    Usart1Config()
 #define UsartRpiSend(X)    Usart1Send(X)

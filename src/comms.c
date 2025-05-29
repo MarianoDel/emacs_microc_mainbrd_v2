@@ -43,6 +43,8 @@ static void Comms_Messages_For_Channels_Treatment (char * msg_str);
 static void Comms_Bridge_Channel1_Msg (char * msg_for_ch1);
 void Comms_Bridge_Conn_Msg (char * local_buff);
 static void Comms_Bridge_Rpi_With_Connectors (void);
+void Comms_Bridge_Supply_Msg (char * local_buff);
+
 
 
 // Module Functions ------------------------------------------------------------
@@ -183,17 +185,16 @@ static void Comms_Messages (char * msg_str)
 	Comms_Bridge_Conn_Msg (msg_str);
     }
 
+    else if (strncmp (msg_str, "supply", sizeof("supply") - 1) == 0)
+    {
+	Comms_Bridge_Supply_Msg (msg_str);
+    }
+
     else if (strncmp (msg_str, "bridge conn", sizeof("bridge conn") - 1) == 0)
     {
 	Comms_Bridge_Rpi_With_Connectors ();
     }
-    
-    else if (strncmp (msg_str, "sup", sizeof("sup") - 1) == 0)
-    {
-        // not implemented yet!
-        UsartRpiSend(s_ans_ok);
-    }
-    
+        
     else
     {
 	// other messages
@@ -389,4 +390,13 @@ void Comms_Bridge_Conn_Msg (char * local_buff)
     
 
 }
+
+
+void Comms_Bridge_Supply_Msg (char * local_buff)
+{
+    char buff_snd [130] = { 0 };
+    sprintf(buff_snd, "%s\r\n", local_buff);
+    UsartSupplySend (buff_snd);
+}
+
 //---- End of File ----//

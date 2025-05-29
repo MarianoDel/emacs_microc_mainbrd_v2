@@ -24,6 +24,7 @@
 #include "comms.h"
 #include "comms_conn.h"
 #include "comms_channel1.h"
+#include "comms_supply.h"
 #include "treatment.h"
 #include "test_functions.h"
 #include "audio.h"
@@ -117,6 +118,10 @@ int main (void)
     //-- Comms with Encoders Brd
     UsartEncConfig ();
     Wait_ms(200);
+
+    //-- Comms with Supply Brd
+    UsartSupplyConfig ();
+    Wait_ms(200);
     
     //-- TIM1 for signals module sequence ready
     TIM6_Init();    // for square times
@@ -151,6 +156,9 @@ int main (void)
         // update the ch1 & probe comms
         Comms_Channel1_Update ();
 
+	// update supply comms
+	Comms_Supply_Update ();
+	    
         // update treatment state
         Treatment_Manager ();
 

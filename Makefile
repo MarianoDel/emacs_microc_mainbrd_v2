@@ -77,6 +77,7 @@ SRC += ./src/dac.c
 SRC += ./src/comms.c
 SRC += ./src/comms_conn.c
 SRC += ./src/comms_channel1.c
+SRC += ./src/comms_supply.c
 SRC += ./src/audio.c
 
 
