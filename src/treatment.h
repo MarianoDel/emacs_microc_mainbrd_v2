@@ -78,6 +78,7 @@ resp_e Treatment_SetGain_Str (char * str);
 resp_e Treatment_SetGain (unsigned short gain);
 unsigned char Treatment_GetGain (void);
 
+unsigned char Treatment_Get_Flag (void);
 
 #endif
 

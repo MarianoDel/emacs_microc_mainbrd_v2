@@ -106,6 +106,7 @@ int main (void)
     UsartRpiConfig ();
     Ena_Ch1_Off();    // disable after UsartRpiConfig
     Wait_ms(200);
+    Ena_Lcd_On ();
     
     //-- Comms with ch1
     UsartChannel1Config ();

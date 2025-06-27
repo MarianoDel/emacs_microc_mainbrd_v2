@@ -76,6 +76,11 @@ void Treatment_Manager (void)
         {
             Treatment_Square_Start_Flag_Reset ();
 	    UsartRpiSend("starting square\r\n");
+
+	    char lbuf [40];
+	    sprintf(lbuf, "  flag: %d\r\n", Treatment_Get_Flag());
+	    UsartRpiSend(lbuf);
+	    
 	    Signals_Square_Reset ();
 	    treat_state = TREATMENT_SQUARE_RUNNING;
 	    Audio_SM(AUDIO_START_UP_EVENT);	    
@@ -462,4 +467,9 @@ void Treatment_Stop_Flag_Reset (void)
     start_stop_flag &= STOP_SET_MASK;
 }
 
+
+unsigned char Treatment_Get_Flag (void)
+{
+    return start_stop_flag;
+}
 //--- end of file ---//

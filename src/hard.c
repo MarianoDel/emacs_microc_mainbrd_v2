@@ -38,6 +38,24 @@ void Ena_Rpi_On (void)
 }
 
 
+void Ena_Rpi_Off (void)
+{
+    ENA_RPI_OFF;
+}
+
+
+void Ena_Lcd_On (void)
+{
+    ENA_LCD_ON;
+}
+
+
+void Ena_Lcd_Off (void)
+{
+    ENA_LCD_OFF;
+}
+
+
 extern void Channel1_Send_Default (void);
 void Ena_Ch1_On (void)
 {
@@ -84,12 +102,6 @@ unsigned char Ena_Ch3_Is_On (void)
 unsigned char Ena_Ch4_Is_On (void)
 {
     return ENA_CH4_ON;
-}
-
-
-void Ena_Rpi_Off (void)
-{
-    ENA_RPI_OFF;
 }
 
 
