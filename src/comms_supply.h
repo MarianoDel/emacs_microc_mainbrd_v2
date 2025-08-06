@@ -20,6 +20,10 @@
 
 // Module Exported Functions ---------------------------------------------------
 void Comms_Supply_Update (void);
+void Comms_Supply_Shutdown_Set (unsigned char new_shut_val);
+void Comms_Supply_Shutdown_Reset (void);
+unsigned char Comms_Supply_Shutdown_Get (void);
+
 
 
 #endif    /* _COMMS_SUPPLY_H_ */

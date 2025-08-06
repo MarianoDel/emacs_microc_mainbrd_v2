@@ -72,6 +72,7 @@ void Treatment_Stop_Flag_Reset (void);
 
 // not used
 resp_e Treatment_SetThreshold_Str (char * str);
+resp_e Treatment_SetAudioVolume_Str (char * str);
 resp_e Treatment_SetThreshold (unsigned short threshold);
 resp_e Treatment_SetMode_Str (char * str);
 resp_e Treatment_SetGain_Str (char * str);

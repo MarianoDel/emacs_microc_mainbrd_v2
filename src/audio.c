@@ -32,6 +32,9 @@ volatile unsigned char signal_cnt = 0;
 volatile unsigned short cycle_cnt_int = 0;
 volatile unsigned short cycle_cnt = 0;
 
+// volume starts at 100% 6 / 16
+volatile unsigned char audio_volume_mult = 6;
+volatile unsigned char audio_volume_bit_shift = 4;
 
 // Module Private Functions ----------------------------------------------------
 void Audio_Ampli_Enable (void);
@@ -66,12 +69,76 @@ void Audio_Start_Tone (unsigned short time_ms, unsigned short freq_hz)
 }
 
 
+void Audio_Volume_Set (unsigned char perc)
+{
+    if (perc > 90)
+    {
+	// 6 / 16 = 0.375
+	audio_volume_mult = 6;
+	audio_volume_bit_shift = 4;
+    }
+    else if (perc > 80)
+    {
+	// 5 / 16 = 0.3125
+	audio_volume_mult = 5;
+	audio_volume_bit_shift = 4;	
+    }
+    else if (perc > 70)
+    {
+	// 4 / 16 = 0.2625
+	audio_volume_mult = 4;
+	audio_volume_bit_shift = 4;	
+    }
+    else if (perc > 60)
+    {
+	// 2 / 8 = 0.25
+	audio_volume_mult = 2;
+	audio_volume_bit_shift = 3;	
+    }
+    else if (perc > 50)
+    {
+	// 3 / 16 = 0.1875
+	audio_volume_mult = 3;
+	audio_volume_bit_shift = 4;	
+    }
+    else if (perc > 40)
+    {
+	// 2 / 16 = 0.125
+	audio_volume_mult = 2;
+	audio_volume_bit_shift = 4;	
+    }
+    else if (perc > 30)
+    {
+	// 1 / 16 = 0.0625
+	audio_volume_mult = 1;
+	audio_volume_bit_shift = 4;	
+    }
+    // else if (perc > 20)
+    // {
+    // 	// 3 / 16 = 0.1875
+    // 	audio_volume_mult = 3;
+    // 	audio_volume_bit_shift = 4;	
+    // }
+    // else if (perc > 10)
+    // {
+    // 	// 3 / 16 = 0.1875
+    // 	audio_volume_mult = 3;
+    // 	audio_volume_bit_shift = 4;	
+    // }
+    else    // audio off
+    {
+	audio_volume_mult = 0;
+	audio_volume_bit_shift = 0;	
+    }    
+}
+
+
 void Audio_Timer_Interrupt_Handler (void)
 {
     if (signal_cnt < 15)
     {
-	short sample = audio_sine_table[signal_cnt] * 6;
-	sample >>= 4;
+	short sample = audio_sine_table[signal_cnt] * audio_volume_mult;
+	sample >>= audio_volume_bit_shift;
 	DAC_Output2(sample + audio_dac_offset);
 	// DAC_Output2(audio_sine_table[signal_cnt] + audio_dac_offset);
 	signal_cnt++;

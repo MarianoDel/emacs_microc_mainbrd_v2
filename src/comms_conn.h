@@ -20,6 +20,7 @@
 
 // Module Exported Functions ---------------------------------------------------
 void Comms_Conn_Update (void);
+void Comms_Conn_Bridge_Once (void);
 
 
 #endif    /* _COMMS_CONN_H_ */

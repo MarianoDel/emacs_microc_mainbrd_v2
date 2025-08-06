@@ -100,6 +100,9 @@ int main (void)
     //-- Audio things init
     TIM5_Init();    // for audio sine
     Audio_Init();
+
+    //-- Ena Encoders and Connectors board
+    Ena_Enc_Conn_On();
     
     //-- Comms with rasp
     Ena_Rpi_On ();
@@ -167,6 +170,50 @@ int main (void)
         // UpdateLed();
 
 	Channel1_Send_Default_Update ();
+
+	// shutdown Lcd
+	if (Comms_Supply_Shutdown_Get() == 1)
+	{
+	    Comms_Supply_Shutdown_Reset();
+
+	    Ena_Lcd_Off();
+
+	    // tell conns we are going down
+	    UsartConnSend("rpi is down\r\n");
+	}
+
+	// shutdown all
+	if (Comms_Supply_Shutdown_Get() == 2)
+	{
+	    Comms_Supply_Shutdown_Reset();
+
+	    UsartRpiSend ("\r\nshutdown\r\n");
+	    // Audio_SM (audio_sm_event_e new_event);    // audio for shutdown?
+	    Wait_ms(20);
+	    
+	    UsartConnSend ("\r\npoweroff\r\n");
+	    Wait_ms(20);
+
+	    // send encoders board to blank display
+	    // UsartEncSend ("\r\npoweroff\r\n");
+	    // Wait_ms(20);
+	    
+	    Ena_Ch1_Off();
+	    Ena_Ch2_Off();
+	    Ena_Ch3_Off();
+	    Ena_Ch4_Off();
+	    // Ena_Enc_Conn_Off();
+
+	    // shutdown display in 2 secs
+	    Wait_ms (2000);
+	    Ena_Lcd_Off();
+
+	    // shutdown connectors board
+	    // Ena_Enc_Conn_Off();
+
+	    // wait to shutdown the rpi
+	    while (1);		
+	}
     }
 }
 

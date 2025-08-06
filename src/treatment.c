@@ -66,6 +66,7 @@ void Treatment_Manager (void)
         if (Treatment_Sine_Start_Flag ())
         {
             Treatment_Sine_Start_Flag_Reset ();
+            Treatment_Stop_Flag_Reset ();    // blank previous stops
 	    UsartRpiSend("starting sinusoidal\r\n");
 	    Signals_Sinusoidal_Reset ();
 	    treat_state = TREATMENT_SINE_RUNNING;
@@ -75,11 +76,12 @@ void Treatment_Manager (void)
         if (Treatment_Square_Start_Flag ())
         {
             Treatment_Square_Start_Flag_Reset ();
+            Treatment_Stop_Flag_Reset ();    // blank previous stops	    
 	    UsartRpiSend("starting square\r\n");
 
-	    char lbuf [40];
-	    sprintf(lbuf, "  flag: %d\r\n", Treatment_Get_Flag());
-	    UsartRpiSend(lbuf);
+	    // char lbuf [40];
+	    // sprintf(lbuf, "  flag: %d\r\n", Treatment_Get_Flag());
+	    // UsartRpiSend(lbuf);
 	    
 	    Signals_Square_Reset ();
 	    treat_state = TREATMENT_SQUARE_RUNNING;
@@ -189,6 +191,25 @@ resp_e Treatment_SetIntensity_Str (mode_e mode, char * str)
     if ((figures) && (figures <= 3) && (new_intensity <= 999))
     {
         resp = Treatment_SetIntensity (mode, new_intensity);
+    }
+
+    return resp;
+}
+
+
+resp_e Treatment_SetAudioVolume_Str (char * str)
+{
+    resp_e resp = resp_error;
+    int figures = 0;
+    unsigned short new_volume = 0;
+    
+    // what we get is E | EE | EEE, no decimal positions
+    figures = StringIsANumber(str, &new_volume);
+
+    if ((figures) && (figures <= 3) && (new_volume <= 100))
+    {
+	Audio_Volume_Set((unsigned char) new_volume);
+        resp = resp_ok;
     }
 
     return resp;

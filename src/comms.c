@@ -17,6 +17,8 @@
 #include "usart.h"
 #include "treatment.h"
 
+#include "comms_conn.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -296,6 +298,18 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
         else
             UsartRpiSend (s_ans_nok);
     }
+    
+    else if (!strncmp(msg, "audio volume", sizeof("audio volume") - 1))
+    {
+        resp = Treatment_SetAudioVolume_Str (msg + sizeof("audio volume"));
+        if (resp == resp_ok)
+	{
+            UsartRpiSend (s_ans_ok);
+	}
+        else
+            UsartRpiSend (s_ans_nok);
+    }
+    
 
     // -- operation messages --
     else if (!strncmp(msg, "square start", sizeof("square start") - 1))

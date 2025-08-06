@@ -90,7 +90,7 @@
 #define PA2    ((GPIOA->ODR & 0x0004) != 0)
 #define PA2_ON    (GPIOA->BSRR = 0x00000004)
 #define PA2_OFF    (GPIOA->BSRR = 0x00040000)
-#define PA3_   ((GPIOA->ODR & 0x0008) != 0)
+#define PA3   ((GPIOA->ODR & 0x0008) != 0)
 #define PA3_ON    (GPIOA->BSRR = 0x00000008)
 #define PA3_OFF    (GPIOA->BSRR = 0x00080000)
 
@@ -224,6 +224,9 @@ void Ena_Rpi_Off (void);
 
 void Ena_Lcd_On (void);
 void Ena_Lcd_Off (void);
+
+void Ena_Enc_Conn_On (void);
+void Ena_Enc_Conn_Off (void);
 
 void Ena_Ch1_On (void);
 void Ena_Ch2_On (void);

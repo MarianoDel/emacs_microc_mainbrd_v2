@@ -56,6 +56,18 @@ void Ena_Lcd_Off (void)
 }
 
 
+void Ena_Enc_Conn_On (void)
+{
+    ENA_ENC_CONN_ON;
+}
+
+
+void Ena_Enc_Conn_Off (void)
+{
+    ENA_ENC_CONN_OFF;
+}
+
+
 extern void Channel1_Send_Default (void);
 void Ena_Ch1_On (void)
 {
