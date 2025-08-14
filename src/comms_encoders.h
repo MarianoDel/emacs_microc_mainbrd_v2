@@ -5,11 +5,11 @@
 // ## @TAGS:   Global
 // ## @CPU:    STM32F103
 // ##
-// #### COMMS_CONN.H ##########################
+// #### COMMS_ENCODERS.H ##########################
 //---------------------------------------------
 
-#ifndef _COMMS_CONN_H_
-#define _COMMS_CONN_H_
+#ifndef _COMMS_ENCODERS_H_
+#define _COMMS_ENCODERS_H_
 
 //---- Includes to help the Defines ----------
 
@@ -19,7 +19,8 @@
 
 
 // Module Exported Functions ---------------------------------------------------
-void Comms_Conn_Update (void);
+void Comms_Encoders_Update (void);
 
 
-#endif    /* _COMMS_CONN_H_ */
+
+#endif    /* _COMMS_ENCODERS_H_ */

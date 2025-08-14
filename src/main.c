@@ -25,6 +25,7 @@
 #include "comms_conn.h"
 #include "comms_channel1.h"
 #include "comms_supply.h"
+#include "comms_encoders.h"
 #include "treatment.h"
 #include "test_functions.h"
 #include "audio.h"
@@ -148,14 +149,21 @@ int main (void)
 	    UsartConnSend("\r\n");
 	    rpi_last_state = Comms_Rpi_Answering ();
 	    if (rpi_last_state)
+	    {
 		UsartConnSend("rpi is up\r\n");
+		UsartEncSend("rpi is up\r\n");		
+	    }
 	    else
+	    {
 		UsartConnSend("rpi is down\r\n");
+		UsartEncSend("rpi is down\r\n");		
+	    }
 
 	}
 
 	// update Connectors Brd comms
 	Comms_Conn_Update ();
+	Comms_Encoders_Update ();
 
         // update the ch1 & probe comms
         Comms_Channel1_Update ();
@@ -180,6 +188,7 @@ int main (void)
 
 	    // tell conns we are going down
 	    UsartConnSend("rpi is down\r\n");
+	    UsartEncSend("rpi is down\r\n");	    
 	}
 
 	// shutdown all
@@ -195,8 +204,8 @@ int main (void)
 	    Wait_ms(20);
 
 	    // send encoders board to blank display
-	    // UsartEncSend ("\r\npoweroff\r\n");
-	    // Wait_ms(20);
+	    UsartEncSend ("\r\npoweroff\r\n");
+	    Wait_ms(20);
 	    
 	    Ena_Ch1_Off();
 	    Ena_Ch2_Off();

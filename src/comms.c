@@ -46,7 +46,7 @@ static void Comms_Bridge_Channel1_Msg (char * msg_for_ch1);
 void Comms_Bridge_Conn_Msg (char * local_buff);
 static void Comms_Bridge_Rpi_With_Connectors (void);
 void Comms_Bridge_Supply_Msg (char * local_buff);
-
+void Comms_Bridge_Encod_Msg (char * local_buff);
 
 
 // Module Functions ------------------------------------------------------------
@@ -161,25 +161,9 @@ static void Comms_Messages (char * msg_str)
         }
     }
     
-    else if (strncmp (msg_str, "encod", sizeof("encod") - 1) == 0)
+    else if (strncmp (msg_str, "enc ", sizeof("enc ") - 1) == 0)
     {
-        char * pmsg = msg_str + sizeof("encod") - 1;
-        
-        // check enable if valid number
-        if ((*pmsg >= '0') && (*pmsg <= '7'))
-        {
-            if ((*(pmsg + 1) == ' ') &&
-                (*(pmsg + 2) >= '0') &&
-                (*(pmsg + 2) <= ';'))
-            {
-                char buff_encod [30] = { 0 };
-                // "enc 0 1\n"
-                sprintf(buff_encod, "enc %c %c\n", *(pmsg + 0), *(pmsg + 2));
-                // Bit_Bang_Tx_Send(buff_encod);
-                // Bit_Bang_Tx_Send("enc 0 1\n");                
-                // i2c_driver_set_encod (*pmsg - '0', *(pmsg + 2) - '0');
-            }
-        }
+	Comms_Bridge_Encod_Msg (msg_str);
     }
     
     else if (strncmp (msg_str, "conn", sizeof("conn") - 1) == 0)
@@ -403,6 +387,14 @@ void Comms_Bridge_Conn_Msg (char * local_buff)
     Comms_Conn_Bridge_Once();
     
 
+}
+
+
+void Comms_Bridge_Encod_Msg (char * local_buff)
+{
+    char buff_snd [130] = { 0 };
+    sprintf(buff_snd, "%s\r\n", local_buff);
+    UsartEncSend (buff_snd);
 }
 
 

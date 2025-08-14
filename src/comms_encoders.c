@@ -3,13 +3,11 @@
 // ## @Editor: Emacs - ggtags
 // ## @TAGS:   Global
 // ##
-// #### COMMS_CHANNEL1.C ######################################
+// #### COMMS_ENCODERS.C ##################################
 //---------------------------------------------------------
 
 // Includes --------------------------------------------------------------------
-#include "comms_channel1.h"
-#include "hard.h"
-
+#include "comms_encoders.h"
 #include "usart_channels.h"
 #include "usart.h"
 
@@ -19,7 +17,7 @@
 
 
 // Module Private Types Constants and Macros -----------------------------------
-#define SIZEOF_CHANNEL1_BUFF    128
+#define SIZEOF_ENCODERS_BUFF    128
 // #define COMMS_TT_RELOAD    3000
 
 
@@ -27,43 +25,31 @@
 
 
 // Globals ---------------------------------------------------------------------
-char channel1_buff [SIZEOF_CHANNEL1_BUFF];
-// volatile unsigned short comms_timeout = 0;
-unsigned char last_plates = 0;
-unsigned char last_intel_prb = 0;
+char encod_buff [SIZEOF_ENCODERS_BUFF];
 
 
 // Module Private Functions ----------------------------------------------------
-static void Comms_Channel1_Messages (char * msg_str);
+static void Comms_Encoders_Messages (char * msg_str);
 
 
 
 // Module Functions ------------------------------------------------------------
-void Comms_Channel1_Update (void)
+void Comms_Encoders_Update (void)
 {
-    if (UsartChannel1HaveData())
+    if (UsartEncHaveData())
     {
-        UsartChannel1HaveDataReset();
-        UsartChannel1ReadBuffer(channel1_buff, SIZEOF_CHANNEL1_BUFF);
-        Comms_Channel1_Messages(channel1_buff);
+        UsartEncHaveDataReset();
+        UsartEncReadBuffer(encod_buff, SIZEOF_ENCODERS_BUFF);
+        Comms_Encoders_Messages(encod_buff);
     }
 }
 
 
-static void Comms_Channel1_Messages (char * msg_str)
+static void Comms_Encoders_Messages (char * msg_str)
 {
-    Comms_Bridge_Rpi_Msg (msg_str);
-}
-
-
-void Comms_Bridge_Rpi_Msg (char * msg_for_rpi)
-{
-    char buff [128];    
-    
-    // bridge the message
-    sprintf(buff, "%s\n", msg_for_rpi);
-    UsartRpiSend (buff);
-    
+    char buff [128];
+    sprintf(buff, "%s\r\n", msg_str);	    
+    UsartRpiSend(buff);
 }
 
 

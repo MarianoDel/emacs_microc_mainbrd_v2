@@ -184,6 +184,9 @@ void Audio_SM (audio_sm_event_e new_event)
     switch (audio_sm_state)
     {
     case AUDIO_RESET:
+	if (audio_volume_mult == 0)    // no audio volume
+	    break;
+	    
 	if (new_event == AUDIO_START_UP_EVENT)
 	{
 	    Audio_Start_Tone (100, 400);
