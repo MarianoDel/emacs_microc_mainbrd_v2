@@ -69,67 +69,40 @@ void Audio_Start_Tone (unsigned short time_ms, unsigned short freq_hz)
 }
 
 
-void Audio_Volume_Set (unsigned char perc)
+void Audio_Volume_Set (audio_volume_set_e new_volume)
 {
-    if (perc > 90)
+    switch (new_volume)
     {
+    case AUDIO_VOLUME_SET_FULL:
 	// 6 / 16 = 0.375
 	audio_volume_mult = 6;
 	audio_volume_bit_shift = 4;
-    }
-    else if (perc > 80)
-    {
-	// 5 / 16 = 0.3125
-	audio_volume_mult = 5;
-	audio_volume_bit_shift = 4;	
-    }
-    else if (perc > 70)
-    {
+	break;
+
+    case AUDIO_VOLUME_SET_HIGH:
 	// 4 / 16 = 0.2625
 	audio_volume_mult = 4;
 	audio_volume_bit_shift = 4;	
-    }
-    else if (perc > 60)
-    {
-	// 2 / 8 = 0.25
-	audio_volume_mult = 2;
-	audio_volume_bit_shift = 3;	
-    }
-    else if (perc > 50)
-    {
+	break;
+
+    case AUDIO_VOLUME_SET_HALF:
 	// 3 / 16 = 0.1875
 	audio_volume_mult = 3;
 	audio_volume_bit_shift = 4;	
-    }
-    else if (perc > 40)
-    {
-	// 2 / 16 = 0.125
-	audio_volume_mult = 2;
-	audio_volume_bit_shift = 4;	
-    }
-    else if (perc > 30)
-    {
+	break;
+
+    case AUDIO_VOLUME_SET_LOW:
 	// 1 / 16 = 0.0625
 	audio_volume_mult = 1;
 	audio_volume_bit_shift = 4;	
-    }
-    // else if (perc > 20)
-    // {
-    // 	// 3 / 16 = 0.1875
-    // 	audio_volume_mult = 3;
-    // 	audio_volume_bit_shift = 4;	
-    // }
-    // else if (perc > 10)
-    // {
-    // 	// 3 / 16 = 0.1875
-    // 	audio_volume_mult = 3;
-    // 	audio_volume_bit_shift = 4;	
-    // }
-    else    // audio off
-    {
+	break;
+
+    case AUDIO_VOLUME_SET_OFF:
+    default:
 	audio_volume_mult = 0;
 	audio_volume_bit_shift = 0;	
-    }    
+	break;
+    }
 }
 
 

@@ -101,9 +101,6 @@ int main (void)
     //-- Audio things init
     TIM5_Init();    // for audio sine
     Audio_Init();
-
-    //-- Ena Encoders and Connectors board
-    Ena_Enc_Conn_On();
     
     //-- Comms with rasp
     Ena_Rpi_On ();
@@ -116,14 +113,13 @@ int main (void)
     UsartChannel1Config ();
     Wait_ms(200);
 
-    //-- Comms with Connectors Brd
+    //-- Comms with Connectors Brd & Encoders Brd
     UsartConnConfig ();
-    Wait_ms(200);
-
-    //-- Comms with Encoders Brd
     UsartEncConfig ();
     Wait_ms(200);
-
+    //-- Ena Encoders and Connectors board
+    Ena_Enc_Conn_On();
+    
     //-- Comms with Supply Brd
     UsartSupplyConfig ();
     Wait_ms(200);
@@ -158,7 +154,6 @@ int main (void)
 		UsartConnSend("rpi is down\r\n");
 		UsartEncSend("rpi is down\r\n");		
 	    }
-
 	}
 
 	// update Connectors Brd comms
@@ -205,7 +200,7 @@ int main (void)
 
 	    // send encoders board to blank display
 	    UsartEncSend ("\r\npoweroff\r\n");
-	    Wait_ms(20);
+	    // Wait_ms(20);
 	    
 	    Ena_Ch1_Off();
 	    Ena_Ch2_Off();

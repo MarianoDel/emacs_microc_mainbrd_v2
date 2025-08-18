@@ -200,17 +200,36 @@ resp_e Treatment_SetIntensity_Str (mode_e mode, char * str)
 resp_e Treatment_SetAudioVolume_Str (char * str)
 {
     resp_e resp = resp_error;
-    int figures = 0;
-    unsigned short new_volume = 0;
-    
-    // what we get is E | EE | EEE, no decimal positions
-    figures = StringIsANumber(str, &new_volume);
+    audio_volume_set_e new_volume = AUDIO_VOLUME_SET_OFF;
 
-    if ((figures) && (figures <= 3) && (new_volume <= 100))
+    if (!strncmp(str, "full", sizeof("full") - 1))
     {
-	Audio_Volume_Set((unsigned char) new_volume);
-        resp = resp_ok;
+	new_volume = AUDIO_VOLUME_SET_FULL;
+	resp = resp_ok;
     }
+    else if (!strncmp(str, "high", sizeof("high") - 1))
+    {
+    	new_volume = AUDIO_VOLUME_SET_HIGH;
+	resp = resp_ok;
+    }
+    else if (!strncmp(str, "half", sizeof("half") - 1))
+    {
+    	new_volume = AUDIO_VOLUME_SET_HALF;
+	resp = resp_ok;
+    }
+    else if (!strncmp(str, "low", sizeof("low") - 1))
+    {
+    	new_volume = AUDIO_VOLUME_SET_LOW;
+	resp = resp_ok;
+    }
+    else if (!strncmp(str, "off", sizeof("off") - 1))
+    {
+    	new_volume = AUDIO_VOLUME_SET_OFF;
+	resp = resp_ok;
+    }
+
+    if (resp == resp_ok)
+	Audio_Volume_Set(new_volume);
 
     return resp;
 }
