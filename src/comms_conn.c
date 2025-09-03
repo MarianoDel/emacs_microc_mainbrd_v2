@@ -31,6 +31,7 @@ char conn_buff [SIZEOF_CONN_BUFF];
 // volatile unsigned short comms_timeout = 0;
 unsigned char last_plates = 0;
 unsigned char last_intel_prb = 0;
+unsigned char ena_ch1_with_probe = 0;
 
 
 // Module Private Functions ----------------------------------------------------
@@ -115,15 +116,24 @@ static void Comms_Conn_Messages (char * msg_str)
 	    if (intel_prb)
 	    {
 		if (plates & 0x40)
+		{
+		    ena_ch1_with_probe = 1;
 		    Ena_Ch1_On();
+		}
 		else
+		{
+		    if (ena_ch1_with_probe)
+		    {
+			ena_ch1_with_probe = 0;
+			UsartRpiSend("none probe\r\n");
+		    }
 		    Ena_Ch1_Off();
+		}
 	    }
 	    else if ((plates & 0xC0) == 0xC0)
 		Ena_Ch1_On();
 	    else
 		Ena_Ch1_Off();
-
 	}
     }
 }

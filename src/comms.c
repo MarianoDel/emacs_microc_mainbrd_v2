@@ -258,6 +258,12 @@ void Comms_Messages_For_Channels_Treatment (char * msg_str)
             UsartRpiSend (s_ans_nok);
     }
 
+    else if (!strncmp(msg, "set_gain", sizeof("set_gain") - 1))
+    {
+	Comms_Bridge_Channel1_Msg (msg);
+	UsartRpiSend (s_ans_ok);
+    }
+    
     // config messages for channel setup
     // else if (!strncmp(msg, "mode", sizeof("mode") - 1))
     // {
